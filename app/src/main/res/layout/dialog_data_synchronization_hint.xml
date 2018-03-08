@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="140dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/text_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="0dp"
+        android:gravity="center"
+        android:text="数据同步中"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/avi"
+        style="@style/AVLoadingIndicatorView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:visibility="visible"
+        app:indicatorColor="@color/black" />
+
+    <Button
+        android:id="@+id/button_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:background="#7181fd"
+        android:text="确定"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:visibility="gone" />
+    <!--<com.eyalbira.loadingdots.LoadingDots-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="center_horizontal"-->
+    <!--app:LoadingDots_auto_play="true"-->
+
+    <!--app:LoadingDots_dots_color="@color/black"-->
+    <!--app:LoadingDots_dots_count="6"-->
+    <!--app:LoadingDots_dots_size="10dp"-->
+    <!--app:LoadingDots_dots_space="5dp"-->
+
+    <!--app:LoadingDots_loop_duration="800"-->
+    <!--app:LoadingDots_loop_start_delay="100"-->
+
+    <!--app:LoadingDots_jump_duration="200"-->
+    <!--app:LoadingDots_jump_height="4dp"/>-->
+</LinearLayout>
