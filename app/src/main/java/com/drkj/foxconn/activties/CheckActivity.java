@@ -48,7 +48,7 @@ public class CheckActivity extends BaseActivity {
 
     private CheckAdapter mAdapter;
 
-    MyAdapter adapter;
+//    MyAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,9 +85,10 @@ public class CheckActivity extends BaseActivity {
 
     @OnClick(R.id.image_save_check)
     void saveCheck() {
-        for (EquipmentResultBean.DataBean.EquipmentAttributeListBean attributeListBean : adapter.bean.getEquipmentAttributeList()) {
-            DbController.getInstance().updateEquipmentAttribute(attributeListBean);
-            DbController.getInstance().updateEquipmentCheck(adapter.bean);
+        DbController.getInstance().updateEquipmentAttribute(mAdapter.getBean());
+        for (EquipmentResultBean.DataBean.EquipmentAttributeListBean attributeListBean : mAdapter.getBean().getEquipmentAttributeList()) {
+//            DbController.getInstance().updateEquipmentAttribute(attributeListBean);
+            DbController.getInstance().updateEquipmentCheck(mAdapter.getBean());
             finish();
         }
     }

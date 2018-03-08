@@ -36,7 +36,6 @@ class LoginPresenter : BasePresenter<ILoginView>() {
                             rootView!!.onReceiveMsg("帐号或者密码错误")
                             rootView!!.onLoginFailed()
                         }
-
                         else -> {
                             rootView!!.onReceiveMsg("服务器异常")
                             rootView!!.onLoginFailed()

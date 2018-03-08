@@ -146,6 +146,7 @@ public class DbController {
                 bean1.setType(cursor1.getString(cursor1.getColumnIndex("type")));
                 bean1.setUpdateBy(cursor1.getString(cursor1.getColumnIndex("updateBy")));
                 bean1.setUpdateName(cursor1.getString(cursor1.getColumnIndex("updateName")));
+                bean1.setValue(cursor1.getDouble(cursor1.getColumnIndex("value")));
                 list.add(bean1);
             }
             bean.setEquipmentAttributeList(list);
@@ -204,6 +205,15 @@ public class DbController {
         ContentValues values = new ContentValues();
         values.put("value", attributeListBean.getValue());
         db.update(DbConstant.TABLE_EQUIPMENTATTRIBUTE, values, "equipmentId=? and id=?", new String[]{attributeListBean.getEquipmentId(), attributeListBean.getId()});
+    }
+
+    public void updateEquipmentAttribute(EquipmentResultBean.DataBean dataBean) {
+        SQLiteDatabase db = sqlHelper.getWritableDatabase();
+        for (EquipmentResultBean.DataBean.EquipmentAttributeListBean attributeListBean : dataBean.getEquipmentAttributeList()) {
+            ContentValues values = new ContentValues();
+            values.put("value", attributeListBean.getValue());
+            db.update(DbConstant.TABLE_EQUIPMENTATTRIBUTE, values, "equipmentId=? and id=?", new String[]{attributeListBean.getEquipmentId(), attributeListBean.getId()});
+        }
     }
 
     public void updateEquipmentCheck(EquipmentResultBean.DataBean dataBean) {

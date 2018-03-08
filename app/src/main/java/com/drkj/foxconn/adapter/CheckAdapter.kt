@@ -34,6 +34,8 @@ class CheckAdapter(context: Context, bean: EquipmentResultBean.DataBean) : BaseA
         this.mOnContentChangedListener = listener
     }
 
+    fun getBean(): EquipmentResultBean.DataBean = mBean
+
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val holder: ViewHolder
         val itemView: View
@@ -59,9 +61,8 @@ class CheckAdapter(context: Context, bean: EquipmentResultBean.DataBean) : BaseA
             }
 
             override fun onTextChanged(charSequence: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                val value = charSequence.toString().toDouble()
-
                 if (!TextUtils.isEmpty(charSequence)) {
+                    val value = charSequence.toString().toDouble()
                     try {
                         if (max <= 0 && value > min) {
                             holder.attrHint.setBackgroundColor(Color.GREEN)
@@ -99,6 +100,10 @@ class CheckAdapter(context: Context, bean: EquipmentResultBean.DataBean) : BaseA
             } else {
                 mOnContentChangedListener?.onRangeChanged("")
             }
+        }
+
+        if (!TextUtils.isEmpty(mBean.isCheck) && mBean.isCheck == "true") {
+            holder.attrValueText.text = mBean.equipmentAttributeList[position].value.toString()
         }
         return itemView
     }

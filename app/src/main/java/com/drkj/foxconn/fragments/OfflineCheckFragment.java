@@ -30,7 +30,7 @@ public class OfflineCheckFragment extends Fragment {
 
 //    MyAdapter adapter;
 
-    OfflineCheckAdapter offlineCheckAdapter;
+    public OfflineCheckAdapter offlineCheckAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,5 +69,9 @@ public class OfflineCheckFragment extends Fragment {
     public void onPause() {
         super.onPause();
         Log.e("fragment", "onPause");
+    }
+
+    public void updateData() {
+        offlineCheckAdapter.notifyDataSetChanged();
     }
 }

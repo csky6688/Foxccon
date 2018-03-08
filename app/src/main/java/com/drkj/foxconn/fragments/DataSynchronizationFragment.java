@@ -217,6 +217,9 @@ public class DataSynchronizationFragment extends Fragment {
                             dialog.findViewById(R.id.button_confirm).setVisibility(View.VISIBLE);
                             TextView message = dialog.findViewById(R.id.text_message);
                             message.setText("数据同步完成!");
+                            DbController.getInstance().deleteEquipmentCheck();
+//                            ((OfflineCheckFragment) activity.getFragmentList().get(activity.getFRAGMENT_OFFLINE_CHECK())).updateData();
+                            activity.getFragmentList().get(activity.getFRAGMENT_OFFLINE_CHECK()).onResume();
                             dialog.findViewById(R.id.button_confirm).setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -224,7 +227,7 @@ public class DataSynchronizationFragment extends Fragment {
                                 }
                             });
                         } else {
-
+                            dialog.dismiss();
                         }
                     }
                 }, new Consumer<Throwable>() {
@@ -243,7 +246,6 @@ public class DataSynchronizationFragment extends Fragment {
                         });
                     }
                 });
-        DbController.getInstance().deleteEquipmentCheck();
     }
 
     @OnClick(R.id.image_start_check)
