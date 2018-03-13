@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,7 +19,10 @@ import com.drkj.foxconn.BaseActivity;
 import com.drkj.foxconn.R;
 import com.drkj.foxconn.adapter.ImageCaptureAdapter;
 import com.drkj.foxconn.bean.EquipmentFaultBean;
+import com.drkj.foxconn.bean.FeedbackBean;
 import com.drkj.foxconn.db.DbController;
+import com.drkj.foxconn.mvp.presenter.EquipmentFaultPresenter;
+import com.drkj.foxconn.mvp.view.IEquipmentFaultView;
 import com.drkj.foxconn.util.FileUtil;
 
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +35,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class EquipmentFaultActivity extends BaseActivity implements ImageCaptureAdapter.OnItemClickListener {
+public class EquipmentFaultActivity extends BaseActivity implements ImageCaptureAdapter.OnItemClickListener, IEquipmentFaultView {
 
     @BindView(R.id.edit_content)
     EditText content;
@@ -40,10 +44,19 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
     @BindView(R.id.equipment_fault_recycler_view)
     RecyclerView mRecyclerView;
 
-    ImageCaptureAdapter mAdapter;
+    private ImageCaptureAdapter mAdapter;
 
     private String type = "0";
-    private EquipmentFaultBean bean;
+
+    private EquipmentFaultBean equipmentFaultBean;
+
+    private String equipmentFaultId;
+
+    private EquipmentFaultPresenter presenter = new EquipmentFaultPresenter();
+
+    private List<String> typeList = new ArrayList<>();
+
+    private ArrayAdapter<String> spinnerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,22 +64,85 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
         setContentView(R.layout.activity_equipment_fault);
         ButterKnife.bind(this);
         initView();
-        bean = new EquipmentFaultBean();
+        equipmentFaultBean = new EquipmentFaultBean();
     }
 
     private void initView() {
-        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayout.HORIZONTAL, false);
-
         mAdapter = new ImageCaptureAdapter(this);
-        mRecyclerView.setLayoutManager(manager);
-        mRecyclerView.setAdapter(mAdapter);
+        presenter.bindView(this);
+
+        typeList.add("人为");
+        typeList.add("非人为");
+
+        if (!TextUtils.isEmpty(getIntent().getStringExtra("equipmentFaultId"))) {
+            equipmentFaultId = getIntent().getStringExtra("equipmentFaultId");
+            presenter.deployData(equipmentFaultId);
+        } else {
+            presenter.createData();
+        }
+
+        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayout.HORIZONTAL, false);
         mAdapter.setOnItemClickListener(this);
 
-        List<String> data = new ArrayList<>();
-        data.add("人为");
-        data.add("非人为");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.item_spinner_type, data);
-        typeSpinner.setAdapter(arrayAdapter);
+        mRecyclerView.setLayoutManager(manager);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @OnClick(R.id.image_save_feedback)
+    void saveFeedback() {
+        String tempId = String.valueOf(System.currentTimeMillis());
+        if (TextUtils.isEmpty(equipmentFaultId)) {
+            equipmentFaultBean.setContent(content.getText().toString());
+            equipmentFaultBean.setType(type);
+            equipmentFaultBean.setId(tempId);
+
+            List<EquipmentFaultBean.EquipmentFeedbackPictureListBean> pictureBeanList = new ArrayList<>();
+            for (File file : mAdapter.getAllData()) {
+                EquipmentFaultBean.EquipmentFeedbackPictureListBean pictureBean = new EquipmentFaultBean.EquipmentFeedbackPictureListBean();
+                pictureBean.setId(tempId);
+                pictureBean.setPath(file.getAbsolutePath());
+                pictureBeanList.add(pictureBean);
+            }
+            equipmentFaultBean.setEquipmentFeedbackPictureList(pictureBeanList);
+
+            DbController.getInstance().saveEquipmentFault(equipmentFaultBean);
+            finish();
+        } else {
+            equipmentFaultBean.setContent(content.getText().toString());
+            equipmentFaultBean.setType(type);
+            equipmentFaultBean.setId(tempId);
+            List<EquipmentFaultBean.EquipmentFeedbackPictureListBean> pictureBeanList = new ArrayList<>();
+            for (File file : mAdapter.getAllData()) {
+                EquipmentFaultBean.EquipmentFeedbackPictureListBean pictureBean = new EquipmentFaultBean.EquipmentFeedbackPictureListBean();
+                pictureBean.setId(tempId);
+                pictureBean.setPath(file.getAbsolutePath());
+                pictureBeanList.add(pictureBean);
+            }
+            equipmentFaultBean.setEquipmentFeedbackPictureList(pictureBeanList);
+
+            DbController.getInstance().saveEquipmentFault(equipmentFaultBean);
+            DbController.getInstance().deleteEquipmentFaultById(equipmentFaultId);
+            finish();
+        }
+    }
+
+    @Override
+    public void onDeployFault(@NotNull EquipmentFaultBean bean) {
+        for (EquipmentFaultBean.EquipmentFeedbackPictureListBean picBean : bean.getEquipmentFeedbackPictureList()) {
+            mAdapter.addPic(new File(picBean.getPath()));
+        }
+        equipmentFaultBean = bean;
+
+        content.setText(bean.getContent());
+
+        ArrayList<File> tempList = new ArrayList<>();
+        for (EquipmentFaultBean.EquipmentFeedbackPictureListBean listBean : equipmentFaultBean.getEquipmentFeedbackPictureList()) {
+            tempList.add(new File(listBean.getPath()));
+        }
+
+        spinnerAdapter = new ArrayAdapter<>(this, R.layout.item_spinner_type, typeList);
+        typeSpinner.setAdapter(spinnerAdapter);
+        typeSpinner.setSelection(Integer.parseInt(equipmentFaultBean.getType()), true);
         typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -86,26 +162,32 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
             }
         });
 
+        mAdapter.setImgList(tempList);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
-    @OnClick(R.id.image_save_feedback)
-    void saveFeedback() {
-        String tempId = String.valueOf(System.currentTimeMillis());
-        bean.setContent(content.getText().toString());
-        bean.setType(type);
-        bean.setId(tempId);
+    @Override
+    public void onFaultCreate() {
+        spinnerAdapter = new ArrayAdapter<>(this, R.layout.item_spinner_type, typeList);
+        typeSpinner.setAdapter(spinnerAdapter);
+        typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        type = "0";
+                        break;
+                    case 1:
+                        type = "1";
+                        break;
+                }
+            }
 
-        List<EquipmentFaultBean.EquipmentFeedbackPictureListBean> pictureBeanList = new ArrayList<>();
-        for (File file : mAdapter.getAllData()) {
-            EquipmentFaultBean.EquipmentFeedbackPictureListBean pictureBean = new EquipmentFaultBean.EquipmentFeedbackPictureListBean();
-            pictureBean.setId(tempId);
-            pictureBean.setPath(file.getAbsolutePath());
-            pictureBeanList.add(pictureBean);
-        }
-        bean.setEquipmentFeedbackPictureList(pictureBeanList);
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
-        DbController.getInstance().saveEquipmentFault(bean);
-        finish();
+            }
+        });
     }
 
     @Override

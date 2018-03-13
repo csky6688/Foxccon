@@ -376,9 +376,66 @@ public class DbController {
         return list;
     }
 
+    public FeedbackBean queryFeedbackById(String id) {
+        SQLiteDatabase db = sqlHelper.getReadableDatabase();
+
+        Cursor cursor = db.query(DbConstant.TABLE_FEEDBACK, null, "id=?", new String[]{id}, null, null, null);
+        FeedbackBean feedbackBean = new FeedbackBean();
+        if (cursor.moveToFirst()) {
+            feedbackBean.setContent(cursor.getString(cursor.getColumnIndex("content")));
+            feedbackBean.setCreateBy(cursor.getString(cursor.getColumnIndex("createBy")));
+            feedbackBean.setCreateDate(cursor.getString(cursor.getColumnIndex("createDate")));
+            feedbackBean.setCreateName(cursor.getString(cursor.getColumnIndex("createName")));
+            feedbackBean.setId(cursor.getString(cursor.getColumnIndex("id")));
+            feedbackBean.setRegionCode(cursor.getString(cursor.getColumnIndex("regionCode")));
+            feedbackBean.setRegionId(cursor.getString(cursor.getColumnIndex("regionId")));
+            feedbackBean.setRegionName(cursor.getString(cursor.getColumnIndex("regionName")));
+            feedbackBean.setType(cursor.getString(cursor.getColumnIndex("type")));
+            feedbackBean.setUpdateBy(cursor.getString(cursor.getColumnIndex("updateBy")));
+            feedbackBean.setUpdateDate(cursor.getString(cursor.getColumnIndex("updateDate")));
+            feedbackBean.setUpdateName(cursor.getString(cursor.getColumnIndex("updateName")));
+            Cursor cursor1 = db.query(DbConstant.TABLE_FEEDBACK_PICTURE_LIST, null, "id=?", new String[]{id}, null, null, null);
+            List<FeedbackBean.LocalFeedbackPictureListBean> beanList = new ArrayList<>();
+            while (cursor1.moveToNext()) {
+                FeedbackBean.LocalFeedbackPictureListBean tempBean = new FeedbackBean.LocalFeedbackPictureListBean();
+                tempBean.setCreateBy(cursor1.getString(cursor1.getColumnIndex("createBy")));
+                tempBean.setCreateDate(cursor1.getString(cursor1.getColumnIndex("createDate")));
+                tempBean.setCreateName(cursor1.getString(cursor1.getColumnIndex("createName")));
+                tempBean.setId(cursor1.getString(cursor1.getColumnIndex("id")));
+                tempBean.setLocalFeedbackId(cursor1.getString(cursor1.getColumnIndex("localFeedbackId")));
+                tempBean.setPicture(cursor1.getString(cursor1.getColumnIndex("picture")));
+                if (cursor1.getString(cursor1.getColumnIndex("path")) == null) {
+                    continue;
+                } else {
+                    tempBean.setPath(cursor1.getString(cursor1.getColumnIndex("path")));
+                }
+                tempBean.setUpdateBy(cursor1.getString(cursor1.getColumnIndex("updateBy")));
+                tempBean.setUpdateDate(cursor1.getString(cursor1.getColumnIndex("updateDate")));
+                tempBean.setUpdateName(cursor1.getString(cursor1.getColumnIndex("updateName")));
+                beanList.add(tempBean);
+            }
+            feedbackBean.setLocalFeedbackPictureList(beanList);
+            cursor1.close();
+        }
+        cursor.close();
+        return feedbackBean;
+    }
+
     public void deleteFeedback(FeedbackBean bean) {
         SQLiteDatabase db = sqlHelper.getWritableDatabase();
         db.delete(DbConstant.TABLE_FEEDBACK, "id=?", new String[]{bean.getId()});
+        deleteFeedbackPictureById(bean.getId());
+    }
+
+    public void deleteFeedbackById(String id) {
+        SQLiteDatabase db = sqlHelper.getWritableDatabase();
+        db.delete(DbConstant.TABLE_FEEDBACK, "id=?", new String[]{id});
+        deleteFeedbackPictureById(id);
+    }
+
+    public void deleteFeedbackPictureById(String id) {
+        SQLiteDatabase db = sqlHelper.getWritableDatabase();
+        db.delete(DbConstant.TABLE_FEEDBACK_PICTURE_LIST, "id=?", new String[]{id});
     }
 
     public void saveEquipmentFault(EquipmentFaultBean bean) {
@@ -421,6 +478,47 @@ public class DbController {
             picValue.put("updateName", pictureBean.getUpdateName());
             db.insert(DbConstant.TABLE_EQUIPMENT_FAULT_PICTURE_LIST, null, picValue);
         }
+    }
+
+    public EquipmentFaultBean queryEquipmentFaultById(String id) {
+        SQLiteDatabase db = sqlHelper.getReadableDatabase();
+        EquipmentFaultBean equipmentFaultBean = new EquipmentFaultBean();
+        Cursor cursor = db.query(DbConstant.TABLE_EQUIPMENT_FAULT, null, "id=?", new String[]{id}, null, null, null);
+        if (cursor.moveToFirst()) {
+            equipmentFaultBean.setContent(cursor.getString(cursor.getColumnIndex("content")));
+            equipmentFaultBean.setCreateBy(cursor.getString(cursor.getColumnIndex("createBy")));
+            equipmentFaultBean.setCreateDate(cursor.getString(cursor.getColumnIndex("createDate")));
+            equipmentFaultBean.setCreateName(cursor.getString(cursor.getColumnIndex("createName")));
+            equipmentFaultBean.setEquipmentCode(cursor.getString(cursor.getColumnIndex("equipmentCode")));
+            equipmentFaultBean.setEquipmentId(cursor.getString(cursor.getColumnIndex("equipmentId")));
+            equipmentFaultBean.setEquipmentName(cursor.getString(cursor.getColumnIndex("equipmentName")));
+            equipmentFaultBean.setId(cursor.getString(cursor.getColumnIndex("id")));
+            equipmentFaultBean.setType(cursor.getString(cursor.getColumnIndex("type")));
+            equipmentFaultBean.setUpdateBy(cursor.getString(cursor.getColumnIndex("updateBy")));
+            equipmentFaultBean.setUpdateDate(cursor.getString(cursor.getColumnIndex("updateDate")));
+            equipmentFaultBean.setUpdateName(cursor.getString(cursor.getColumnIndex("updateName")));
+
+            Cursor cursor1 = db.query(DbConstant.TABLE_EQUIPMENT_FAULT_PICTURE_LIST, null, "id=?", new String[]{id}, null, null, null);
+            List<EquipmentFaultBean.EquipmentFeedbackPictureListBean> pictureList = new ArrayList<>();
+            while (cursor1.moveToNext()) {
+                EquipmentFaultBean.EquipmentFeedbackPictureListBean tempBean = new EquipmentFaultBean.EquipmentFeedbackPictureListBean();
+                tempBean.setCreateBy(cursor1.getString(cursor1.getColumnIndex("createBy")));
+                tempBean.setCreateDate(cursor1.getString(cursor1.getColumnIndex("createDate")));
+                tempBean.setCreateName(cursor1.getString(cursor1.getColumnIndex("createName")));
+                tempBean.setId(cursor1.getString(cursor1.getColumnIndex("id")));
+                tempBean.setEquipmentFeedbackId(cursor1.getString(cursor1.getColumnIndex("equipmentFeedbackId")));
+                tempBean.setPicture(cursor1.getString(cursor1.getColumnIndex("picture")));
+                tempBean.setPath(cursor1.getString(cursor1.getColumnIndex("path")));
+                tempBean.setUpdateBy(cursor1.getString(cursor1.getColumnIndex("updateBy")));
+                tempBean.setUpdateDate(cursor1.getString(cursor1.getColumnIndex("updateDate")));
+                tempBean.setUpdateName(cursor1.getString(cursor1.getColumnIndex("updateName")));
+                pictureList.add(tempBean);
+            }
+            cursor1.close();
+            equipmentFaultBean.setEquipmentFeedbackPictureList(pictureList);
+        }
+        cursor.close();
+        return equipmentFaultBean;
     }
 
     public List<EquipmentFaultBean> queryAllEquipmentFault() {
@@ -467,7 +565,18 @@ public class DbController {
     }
 
     public void deleteEquipmentFault(EquipmentFaultBean bean) {
-        SQLiteDatabase db = sqlHelper.getReadableDatabase();
+        SQLiteDatabase db = sqlHelper.getWritableDatabase();
         db.delete(DbConstant.TABLE_EQUIPMENT_FAULT, "id=?", new String[]{bean.getId()});
+    }
+
+    public void deleteEquipmentFaultById(String id) {
+        SQLiteDatabase db = sqlHelper.getWritableDatabase();
+        db.delete(DbConstant.TABLE_EQUIPMENT_FAULT, "id=?", new String[]{id});
+        deleteEquipmentFaultPictureById(id);
+    }
+
+    public void deleteEquipmentFaultPictureById(String id) {
+        SQLiteDatabase db = sqlHelper.getWritableDatabase();
+        db.delete(DbConstant.TABLE_EQUIPMENT_FAULT_PICTURE_LIST, "id=?", new String[]{id});
     }
 }

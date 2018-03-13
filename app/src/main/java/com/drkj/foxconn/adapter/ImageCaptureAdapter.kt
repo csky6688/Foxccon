@@ -16,7 +16,7 @@ import java.io.File
  */
 class ImageCaptureAdapter(context: Context) : RecyclerView.Adapter<ImageCaptureAdapter.ViewHolder>() {
 
-    private val mImgList = ArrayList<File>()
+    private var mImgList = ArrayList<File>()
 
     private val mContext = context
 
@@ -50,6 +50,11 @@ class ImageCaptureAdapter(context: Context) : RecyclerView.Adapter<ImageCaptureA
     private fun deletePic(file: File) {
         notifyItemRemoved(mImgList.indexOf(file))
         mImgList.remove(file)
+    }
+
+    fun setImgList(imgList: ArrayList<File>) {
+        mImgList = imgList
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder = ViewHolder(LayoutInflater.from(parent!!.context).inflate(R.layout.item_add_pic, parent, false))

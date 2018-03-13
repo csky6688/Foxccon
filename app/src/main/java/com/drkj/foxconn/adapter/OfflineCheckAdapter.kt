@@ -71,10 +71,10 @@ class OfflineCheckAdapter(context: Context, dataBeans: List<EquipmentResultBean.
     override fun getCount(): Int = mDataBeans.size
 
     inner class ViewHolder(itemView: View) {
-        var equipmentLocationText: TextView = itemView.findViewById(R.id.text_equipment_location)
-        var equipmentNameText: TextView = itemView.findViewById(R.id.text_equipment_name)
+        var equipmentLocationText: TextView = itemView.findViewById(R.id.equipment_falut_tv_location)
+        var equipmentNameText: TextView = itemView.findViewById(R.id.equipment_fault_tv_name)
         var buildingNameText: TextView = itemView.findViewById(R.id.text_building_name)
-        var layout: LinearLayout = itemView.findViewById(R.id.layout_item)
+        var layout: LinearLayout = itemView.findViewById(R.id.equipment_fault_layout_item)
         var equipmentDefaultCode: TextView = itemView.findViewById(R.id.text_equipment_default_code)
         var equipmentNfcCode: TextView = itemView.findViewById(R.id.text_equipment_nfc_code)
         var checkImg: ImageView = itemView.findViewById(R.id.item_check_img)

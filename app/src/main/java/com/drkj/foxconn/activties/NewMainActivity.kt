@@ -3,10 +3,7 @@ package com.drkj.foxconn.activties
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import com.drkj.foxconn.R
 import com.drkj.foxconn.fragments.DataSynchronizationFragment
 import com.drkj.foxconn.fragments.EquipmentFaultFragment
@@ -26,7 +23,7 @@ class NewMainActivity : BaseActivity(), IMainView, View.OnClickListener {
     val FRAGMENT_FEEDBACK = 2
     val FRAGMENT_FAULT = 3
 
-    val presenter = MainPresenter()
+    private val presenter = MainPresenter()
 
     private val mConentView: FrameLayout by bindView(R.id.new_main_content)
 
@@ -42,7 +39,7 @@ class NewMainActivity : BaseActivity(), IMainView, View.OnClickListener {
 
     private val layoutTab: LinearLayout by bindView(R.id.new_main_tab)
 
-    public val fragmentList = ArrayList<Fragment>()
+    val fragmentList = ArrayList<Fragment>()
 
     private var currentFragment: Fragment? = null
 
@@ -102,6 +99,23 @@ class NewMainActivity : BaseActivity(), IMainView, View.OnClickListener {
         imageFault.setImageResource(R.drawable.ic_equipment_fault_unselected)
     }
 
+//    fun switchFragment(targetFragment: Fragment): FragmentTransaction {
+//        val transaction = supportFragmentManager.beginTransaction()
+//
+//        transaction.replace(R.id.new_main_content, targetFragment)
+//        currentFragment = targetFragment
+////        if (!targetFragment.isAdded) {
+////            if (currentFragment != null) {
+////                transaction.hide(currentFragment)
+////            }
+////            transaction.add(R.id.new_main_content, targetFragment)
+////        } else {
+////            transaction.hide(currentFragment).show(targetFragment)
+////        }
+////        currentFragment = targetFragment
+//        return transaction
+//    }
+
     fun switchFragment(targetFragment: Fragment): FragmentTransaction {
         val transaction = supportFragmentManager.beginTransaction()
 
@@ -128,4 +142,6 @@ class NewMainActivity : BaseActivity(), IMainView, View.OnClickListener {
         switchFragment(fragmentList[FRAGMENT_OFFLINE_CHECK]).commit()
         tvTitle.text = "巡检作业"
     }
+
+    fun getFragmentList(): List<Fragment> = fragmentList
 }

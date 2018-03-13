@@ -44,7 +44,7 @@
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/text_equipment_name"
+                android:id="@+id/equipment_fault_tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -90,7 +90,7 @@
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/text_equipment_location"
+                android:id="@+id/equipment_falut_tv_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"

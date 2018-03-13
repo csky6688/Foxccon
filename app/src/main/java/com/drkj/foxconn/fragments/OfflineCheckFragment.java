@@ -57,6 +57,14 @@ public class OfflineCheckFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        dataBeans = DbController.getInstance().queryAllEquipment();
+        offlineCheckAdapter = new OfflineCheckAdapter(getContext(), dataBeans);
+        listView.setAdapter(offlineCheckAdapter);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         dataBeans = DbController.getInstance().queryAllEquipment();
@@ -65,13 +73,9 @@ public class OfflineCheckFragment extends Fragment {
         Log.e("fragment", "onResume");
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.e("fragment", "onPause");
-    }
-
     public void updateData() {
-        offlineCheckAdapter.notifyDataSetChanged();
+        dataBeans = DbController.getInstance().queryAllEquipment();
+        offlineCheckAdapter = new OfflineCheckAdapter(getContext(), dataBeans);
+        listView.setAdapter(offlineCheckAdapter);
     }
 }

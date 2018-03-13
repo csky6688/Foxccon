@@ -161,6 +161,7 @@ public class DataSynchronizationFragment extends Fragment {
                         dialog.findViewById(R.id.button_confirm).setVisibility(View.VISIBLE);
                         TextView message = dialog.findViewById(R.id.text_message);
                         message.setText("数据同步完成!");
+                        activity.getFragmentList().get(activity.getFRAGMENT_OFFLINE_CHECK()).onResume();
                         dialog.findViewById(R.id.button_confirm).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
