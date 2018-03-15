@@ -2,57 +2,59 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#f1f1f1">
+    android:background="#f1f1f1"
+    android:orientation="vertical">
 
-   <LinearLayout
-       android:layout_width="match_parent"
-       android:layout_height="50dp"
-       android:orientation="horizontal"
-       android:background="#f8f8f8">
-       <TextView
-           android:layout_width="0dp"
-           android:layout_weight="1"
-           android:layout_height="wrap_content"
-           android:layout_gravity="center_vertical"
-           android:gravity="center"
-           android:textSize="18sp"
-           android:textStyle="bold"
-           android:textColor="#999999"
-           android:text="楼栋"/>
-       <TextView
-           android:layout_width="0dp"
-           android:layout_weight="1"
-           android:layout_height="wrap_content"
-           android:layout_gravity="center_vertical"
-           android:gravity="center"
-           android:textSize="18sp"
-           android:textStyle="bold"
-           android:textColor="#999999"
-           android:text="楼层"/>
-       <TextView
-           android:layout_width="0dp"
-           android:layout_weight="1"
-           android:layout_height="wrap_content"
-           android:layout_gravity="center_vertical"
-           android:gravity="center"
-           android:textSize="18sp"
-           android:textStyle="bold"
-           android:textColor="@color/black"
-           android:text="机房"/>
-   </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#f8f8f8"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="楼栋"
+            android:textColor="#999999"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="楼层"
+            android:textColor="#999999"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="机房"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#dfdfdf"/>
+        android:background="#dfdfdf" />
+
     <ListView
         android:id="@+id/list_equipment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:divider="#f1f1f1"
         android:dividerHeight="5dp"
-        android:scrollbars="none"
-        android:divider="#f1f1f1">
-
-    </ListView>
+        android:scrollbars="none" />
 </LinearLayout>

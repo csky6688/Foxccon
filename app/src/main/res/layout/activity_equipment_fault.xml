@@ -44,13 +44,14 @@
                 android:textSize="18sp" />
 
             <TextView
+                android:id="@+id/equipment_fault_tv_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:background="@null"
-                android:text="1栋2层5号机房"
                 android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                tools:text="1栋2层5号机房" />
         </LinearLayout>
 
         <LinearLayout
@@ -67,11 +68,11 @@
                 android:textSize="18sp" />
 
             <TextView
+                android:id="@+id/equipment_fault_tv_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
-                android:text=""
                 android:textColor="@color/black"
                 android:textSize="18sp" />
         </LinearLayout>
@@ -90,11 +91,11 @@
                 android:textSize="18sp" />
 
             <TextView
+                android:id="@+id/equipment_fault_tv_code"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
-                android:text=""
                 android:textColor="@color/black"
                 android:textSize="18sp" />
         </LinearLayout>
@@ -162,9 +163,9 @@
         <!--android:layout_marginEnd="5dp"-->
         <!--android:src="@drawable/ic_add_pic"/>-->
         <!--<View-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="0dp"-->
-            <!--android:layout_weight="1" />-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight="1" />-->
 
         <ImageView
             android:id="@+id/image_save_feedback"

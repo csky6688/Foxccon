@@ -58,8 +58,8 @@ class EquipmentFaultAdapter(context: Context, beanList: List<EquipmentFaultBean>
     override fun getCount(): Int = mBeanList.size
 
     inner class ViewHolder(itemView: View) {
-        val tvTitle: TextView = itemView.findViewById(R.id.equipment_fault_tv_name)
-        val tvLocation: TextView = itemView.findViewById(R.id.equipment_falut_tv_location)
-        val bgLayout: LinearLayout = itemView.findViewById(R.id.equipment_fault_layout_item)
+        val tvTitle: TextView = itemView.findViewById(R.id.equipment_fault_item_tv_name)
+        val tvLocation: TextView = itemView.findViewById(R.id.equipment_fault_item_tv_location)
+        val bgLayout: LinearLayout = itemView.findViewById(R.id.equipment_fault_item_layout)
     }
 }

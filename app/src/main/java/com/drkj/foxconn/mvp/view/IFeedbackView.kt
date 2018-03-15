@@ -11,4 +11,8 @@ interface IFeedbackView : IBaseView {
     fun onCreateFeedback()
 
     fun onDeployFeedback(bean: FeedbackBean)
+
+    fun onNfcReceive(bean: FeedbackBean, nfcCode: String)
+
+    fun onNfcReceiveFailed()
 }

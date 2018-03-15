@@ -6,6 +6,7 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.MifareClassic;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.IOException;
@@ -55,26 +56,10 @@ public class NfcCardUtil {
     private String readTag(Tag tag) {
         MifareClassic mfc = MifareClassic.get(tag);
         String finalData = null;
-//        for (String tech:tag.getTechList()){
-//
-//        }
-
         try {
-//            StringBuilder metaInfo = new StringBuilder();
-
             mfc.connect();
 
-            int type = mfc.getType();//Tag类型
             int sectorCount = mfc.getSectorCount();//扇区数
-            String typeStr;
-
-            switch (type) {
-                case MifareClassic.TYPE_CLASSIC:
-                    typeStr = "TYPE_CLASSIC";
-                    break;
-            }
-
-//            metaInfo.append("类型、扇区、块");
 
             boolean auth;
 
@@ -99,8 +84,6 @@ public class NfcCardUtil {
                     }
                 }
             }
-
-
         } catch (Exception e) {
 
         } finally {
@@ -113,6 +96,115 @@ public class NfcCardUtil {
             }
         }
         return finalData;
+    }
+
+    public String readPointData(Intent intent, int sector, int block) {//获取指定扇区、块的数据
+        String action = intent.getAction();
+        String data = "";
+        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action) ||
+                NfcAdapter.ACTION_TECH_DISCOVERED.equals(action) ||
+                NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
+            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+            MifareClassic mfc = MifareClassic.get(tag);
+            try {
+                mfc.connect();
+
+                int sectorCount = mfc.getSectorCount();//扇区数
+
+                boolean auth;
+
+                int blockCount;
+                int blockIndex;
+
+                for (int i = 0; i < sectorCount; i++) {
+                    auth = mfc.authenticateSectorWithKeyA(i, MifareClassic.KEY_DEFAULT);//逐个获取密码
+
+                    blockCount = mfc.getBlockCountInSector(i);
+                    blockIndex = mfc.sectorToBlock(i);
+
+                    if (auth && i == sector) {
+                        for (int j = 0; j < blockCount; j++) {
+                            if (j == block) {
+                                byte[] tempData = mfc.readBlock(blockIndex);
+                                data = byteArrayToHexString(tempData);
+                                Log.e("nfc", data);
+                                break;
+                            }
+                            blockIndex++;
+                        }
+                    }
+                }
+
+            } catch (Exception e) {
+
+            } finally {
+                if (mfc != null) {
+                    try {
+                        mfc.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return data;
+    }
+
+    public String readNfcCode(Intent intent) {
+        String action = intent.getAction();
+        String data = "";
+        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action) ||
+                NfcAdapter.ACTION_TECH_DISCOVERED.equals(action) ||
+                NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
+            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+            MifareClassic mfc = MifareClassic.get(tag);
+            try {
+                mfc.connect();
+
+                int sectorCount = mfc.getSectorCount();//扇区数
+
+                boolean auth;
+
+                int blockCount;
+                int blockIndex;
+
+                for (int i = 0; i < sectorCount; i++) {
+                    auth = mfc.authenticateSectorWithKeyA(i, MifareClassic.KEY_DEFAULT);//逐个获取密码
+
+                    blockCount = mfc.getBlockCountInSector(i);
+                    blockIndex = mfc.sectorToBlock(i);
+
+                    if (auth && i == 0) {
+                        for (int j = 0; j < blockCount; j++) {
+                            if (j == 1) {
+                                byte[] tempData = mfc.readBlock(blockIndex);
+                                data = byteArrayToHexString(tempData);
+                                Log.e("nfc", data);
+                                break;
+                            }
+                            blockIndex++;
+                        }
+                    }
+                }
+
+            } catch (Exception e) {
+
+            } finally {
+                if (mfc != null) {
+                    try {
+                        mfc.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        if (!TextUtils.isEmpty(data)) {
+            return "XJ" + data.trim().substring(0, 6);
+        } else {
+            return null;
+        }
     }
 
     private String byteArrayToHexString(byte[] bytesId) {   //Byte数组转换为16进制字符串

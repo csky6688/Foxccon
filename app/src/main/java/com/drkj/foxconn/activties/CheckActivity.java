@@ -23,11 +23,11 @@ public class CheckActivity extends BaseActivity {
 
     @BindView(R.id.list_equipment_attr)
     ListView attrList;
-    @BindView(R.id.equipment_fault_tv_name)
+    @BindView(R.id.equipment_tv_name)
     TextView equipmentNameText;
     @BindView(R.id.text_equipment_code)
     TextView equipmentCodeText;
-    @BindView(R.id.equipment_falut_tv_location)
+    @BindView(R.id.equipment_tv_location)
     TextView equipmentLocationText;
     @BindView(R.id.text_threshold)
     TextView equipmentThresholdText;

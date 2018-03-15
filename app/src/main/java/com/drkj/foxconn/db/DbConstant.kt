@@ -74,6 +74,7 @@ object DbConstant {
             "equipmentId text," +
             "equipmentName text," +
             "id text," +
+            "location text," +//TODO 非服务器数据，上传时设置为null
             "type text," +
             "updateBy text," +
             "updateDate text," +
@@ -105,6 +106,7 @@ object DbConstant {
             "createDate text," +
             "createName text," +
             "id text," +
+            "location text," +
             "regionCode text," +
             "regionId text," +
             "regionName text," +

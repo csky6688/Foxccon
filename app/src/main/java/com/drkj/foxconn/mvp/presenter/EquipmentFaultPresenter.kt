@@ -1,5 +1,6 @@
 package com.drkj.foxconn.mvp.presenter
 
+import android.text.TextUtils
 import com.drkj.foxconn.db.DbController
 import com.drkj.foxconn.mvp.BasePresenter
 import com.drkj.foxconn.mvp.view.IEquipmentFaultView
@@ -16,5 +17,31 @@ class EquipmentFaultPresenter : BasePresenter<IEquipmentFaultView>() {
 
     fun createData() {
         rootView!!.onFaultCreate()
+    }
+
+    fun queryEquipmentFault(nfcCode: String) {
+        if (!TextUtils.isEmpty(nfcCode)) {
+            val newCode = "XJ${nfcCode.trim().substring(0, 6)}"
+
+            val equipmentResultBean = DbController.getInstance().queryEquipmentByNfcCode(newCode)
+
+            val location = StringBuilder()
+
+            if (!TextUtils.isEmpty(equipmentResultBean.buildingId)) {
+                location.append(DbController.getInstance().queryRegionInfoById(equipmentResultBean.buildingId).name)
+            }
+
+            if (!TextUtils.isEmpty(equipmentResultBean.storeyId)) {
+                location.append(DbController.getInstance().queryRegionInfoById(equipmentResultBean.storeyId).name)
+            }
+
+            if (!TextUtils.isEmpty(equipmentResultBean.roomId)) {
+                location.append(DbController.getInstance().queryRegionInfoById(equipmentResultBean.roomId).name)
+            }
+
+            rootView!!.onNfcReceive(equipmentResultBean, location.toString(), newCode)
+        } else {
+            rootView!!.onNfcReceiveFailed()
+        }
     }
 }

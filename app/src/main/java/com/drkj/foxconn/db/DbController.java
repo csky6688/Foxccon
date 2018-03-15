@@ -263,6 +263,28 @@ public class DbController {
         return dataBean;
     }
 
+    public RegionResultBean.DataBean queryRegionByNfcCode(String nfcCode) {
+        RegionResultBean.DataBean dataBean = new RegionResultBean.DataBean();
+        SQLiteDatabase db = sqlHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbConstant.TABLE_REGION, null, "nfcCode=?", new String[]{nfcCode}, null, null, null);
+        if (cursor.moveToFirst()) {
+            dataBean.setCode(cursor.getString(cursor.getColumnIndex("code")));
+            dataBean.setCreateBy(cursor.getString(cursor.getColumnIndex("createBy")));
+            dataBean.setCreateDate(cursor.getString(cursor.getColumnIndex("createDate")));
+            dataBean.setCreateName(cursor.getString(cursor.getColumnIndex("createName")));
+            dataBean.setId(cursor.getString(cursor.getColumnIndex("id")));
+            dataBean.setName(cursor.getString(cursor.getColumnIndex("name")));
+            dataBean.setNfcCode(cursor.getString(cursor.getColumnIndex("nfcCode")));
+            dataBean.setParentId(cursor.getString(cursor.getColumnIndex("parentId")));
+            dataBean.setUpdateBy(cursor.getString(cursor.getColumnIndex("updateBy")));
+            dataBean.setUpdateDate(cursor.getString(cursor.getColumnIndex("updateDate")));
+            dataBean.setUpdateName(cursor.getString(cursor.getColumnIndex("updateName")));
+            dataBean.setType(cursor.getString(cursor.getColumnIndex("type")));
+        }
+        cursor.close();
+        return dataBean;
+    }
+
     private int queryEquipmentById(String id) {
         SQLiteDatabase db = sqlHelper.getReadableDatabase();
         Cursor cursor = db.query(DbConstant.TABLE_EQUIPMENT, null, "id=?", new String[]{id}, null, null, null);
@@ -298,6 +320,7 @@ public class DbController {
         values.put("createDate", bean.getCreateDate());
         values.put("createName", bean.getCreateName());
         values.put("id", bean.getId());
+
         values.put("regionCode", bean.getRegionCode());
         values.put("regionId", bean.getRegionId());
         values.put("regionName", bean.getRegionName());
@@ -344,6 +367,7 @@ public class DbController {
             feedbackBean.setCreateDate(cursor.getString(cursor.getColumnIndex("createDate")));
             feedbackBean.setCreateName(cursor.getString(cursor.getColumnIndex("createName")));
             feedbackBean.setId(cursor.getString(cursor.getColumnIndex("id")));
+            feedbackBean.setLoaction(cursor.getString(cursor.getColumnIndex("location")));
             feedbackBean.setRegionCode(cursor.getString(cursor.getColumnIndex("regionCode")));
             feedbackBean.setRegionId(cursor.getString(cursor.getColumnIndex("regionId")));
             feedbackBean.setRegionName(cursor.getString(cursor.getColumnIndex("regionName")));
@@ -387,6 +411,7 @@ public class DbController {
             feedbackBean.setCreateDate(cursor.getString(cursor.getColumnIndex("createDate")));
             feedbackBean.setCreateName(cursor.getString(cursor.getColumnIndex("createName")));
             feedbackBean.setId(cursor.getString(cursor.getColumnIndex("id")));
+            feedbackBean.setLoaction(cursor.getString(cursor.getColumnIndex("location")));
             feedbackBean.setRegionCode(cursor.getString(cursor.getColumnIndex("regionCode")));
             feedbackBean.setRegionId(cursor.getString(cursor.getColumnIndex("regionId")));
             feedbackBean.setRegionName(cursor.getString(cursor.getColumnIndex("regionName")));
@@ -447,7 +472,9 @@ public class DbController {
         values.put("createName", bean.getCreateName());
         values.put("equipmentId", bean.getEquipmentId());
         values.put("equipmentName", bean.getEquipmentName());
+        values.put("equipmentCode", bean.getEquipmentCode());
         values.put("id", bean.getId());
+        values.put("location", bean.getLocation());
         values.put("type", bean.getType());
         values.put("updateBy", bean.getUpdateBy());
         values.put("updateDate", bean.getUpdateDate());
@@ -493,6 +520,7 @@ public class DbController {
             equipmentFaultBean.setEquipmentId(cursor.getString(cursor.getColumnIndex("equipmentId")));
             equipmentFaultBean.setEquipmentName(cursor.getString(cursor.getColumnIndex("equipmentName")));
             equipmentFaultBean.setId(cursor.getString(cursor.getColumnIndex("id")));
+            equipmentFaultBean.setLocation(cursor.getString(cursor.getColumnIndex("location")));
             equipmentFaultBean.setType(cursor.getString(cursor.getColumnIndex("type")));
             equipmentFaultBean.setUpdateBy(cursor.getString(cursor.getColumnIndex("updateBy")));
             equipmentFaultBean.setUpdateDate(cursor.getString(cursor.getColumnIndex("updateDate")));
@@ -535,6 +563,7 @@ public class DbController {
             equipmentFaultBean.setEquipmentId(cursor.getString(cursor.getColumnIndex("equipmentId")));
             equipmentFaultBean.setEquipmentName(cursor.getString(cursor.getColumnIndex("equipmentName")));
             equipmentFaultBean.setId(cursor.getString(cursor.getColumnIndex("id")));
+            equipmentFaultBean.setLocation(cursor.getString(cursor.getColumnIndex("location")));
             equipmentFaultBean.setType(cursor.getString(cursor.getColumnIndex("type")));
             equipmentFaultBean.setUpdateBy(cursor.getString(cursor.getColumnIndex("updateBy")));
             equipmentFaultBean.setUpdateDate(cursor.getString(cursor.getColumnIndex("updateDate")));

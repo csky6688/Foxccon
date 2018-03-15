@@ -13,7 +13,7 @@ import kotterknife.bindView
  * 新登录界面
  * Created by VeronicaRen on 2018/2/23.
  */
-class NewLoginActivity : BaseActivity(), ILoginView {
+class NewLoginKotlinActivity : BaseKotlinActivity(), ILoginView {
 
     private val presenter = LoginPresenter()
 
@@ -67,7 +67,7 @@ class NewLoginActivity : BaseActivity(), ILoginView {
         SpUtil.putBlooean(this, "remember", remember.isChecked)
         dialog?.dismiss()
 //        startActivity(Intent(this, MainActivity::class.java))
-        startActivity(Intent(this, NewMainActivity::class.java))
+        startActivity(Intent(this, NewMainKotlinActivity::class.java))
 //        finish()
     }
 

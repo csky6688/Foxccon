@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/equipment_fault_layout_item"
+        android:id="@+id/equipment_fault_item_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -39,7 +39,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/equipment_falut_tv_location"
+                    android:id="@+id/equipment_fault_item_tv_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -51,7 +51,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/equipment_fault_tv_name"
+                android:id="@+id/equipment_fault_item_tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"

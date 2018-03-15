@@ -8,7 +8,7 @@ import com.drkj.foxconn.util.SpUtil
  * 基础Activity
  * Created by VeronicaRen on 2018/2/23 in Kotlin
  */
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseKotlinActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.drkj.foxconn.BaseActivity;
@@ -50,6 +52,8 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
     Spinner typeSpinner;
     @BindView(R.id.feedback_recycler_view)
     RecyclerView mRecyclerView;
+    @BindView(R.id.feedback_tv_location)
+    TextView tvLocation;
 
     private ImageCaptureAdapter mAdapter;
 
@@ -70,6 +74,13 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
         ButterKnife.bind(this);
         initView();
         feedbackBean = new FeedbackBean();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        presenter.queryFeedback(nfcCardUtil.readPointData(intent, 0, 1));//默认读取0扇区1块的数据
     }
 
     private void initView() {
@@ -120,7 +131,7 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
             feedbackBean.setContent(content.getText().toString());
             feedbackBean.setType(type);
             feedbackBean.setId(tempId);
-
+            feedbackBean.setLoaction(tvLocation.getText().toString());
             List<FeedbackBean.LocalFeedbackPictureListBean> pictureBeanList = new ArrayList<>();
             for (File file : mAdapter.getAllData()) {
                 FeedbackBean.LocalFeedbackPictureListBean pictureBean = new FeedbackBean.LocalFeedbackPictureListBean();
@@ -136,6 +147,7 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
             feedbackBean.setId(tempId);//必须重新更换id
             feedbackBean.setContent(content.getText().toString());
             feedbackBean.setType(type);
+            feedbackBean.setLoaction(tvLocation.getText().toString());
             List<FeedbackBean.LocalFeedbackPictureListBean> pictureListBeans = new ArrayList<>();
             for (File file : mAdapter.getAllData()) {
                 FeedbackBean.LocalFeedbackPictureListBean pictureBean = new FeedbackBean.LocalFeedbackPictureListBean();
@@ -206,6 +218,20 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
     @Override
     public void onCreateFeedback() {
 
+    }
+
+    @Override
+    public void onNfcReceive(@NotNull FeedbackBean bean, @NonNull String nfcCode) {
+        if (bean.getRegionName() != null) {
+            tvLocation.setText(bean.getRegionName());
+        } else {
+            Toast.makeText(this, "没有搜索到位置代码:" + nfcCode, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onNfcReceiveFailed() {
+        Toast.makeText(this, "读取失败,请重新刷卡", Toast.LENGTH_SHORT).show();
     }
 
     @Override

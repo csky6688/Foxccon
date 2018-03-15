@@ -124,7 +124,7 @@ public class EquipmentFaultFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Toast.makeText(getActivity(), "onStart->Fault", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "onStart->Fault", Toast.LENGTH_SHORT).show();
         equipmentFaultBeanList = DbController.getInstance().queryAllEquipmentFault();
         mAdapter = new EquipmentFaultAdapter(getActivity(), equipmentFaultBeanList);
         listView.setAdapter(mAdapter);
@@ -133,7 +133,7 @@ public class EquipmentFaultFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Toast.makeText(getActivity(), "onResume->Fault", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "onResume->Fault", Toast.LENGTH_SHORT).show();
         equipmentFaultBeanList = DbController.getInstance().queryAllEquipmentFault();
         mAdapter = new EquipmentFaultAdapter(getActivity(), equipmentFaultBeanList);
         listView.setAdapter(mAdapter);
@@ -162,9 +162,9 @@ public class EquipmentFaultFragment extends Fragment {
             if (convertView == null) {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_equipment_fault_list, null);
                 holder = new MyViewHolder();
-                holder.equipmentLocationText = convertView.findViewById(R.id.equipment_falut_tv_location);
-                holder.equipmentNameText = convertView.findViewById(R.id.equipment_fault_tv_name);
-                holder.layout = convertView.findViewById(R.id.equipment_fault_layout_item);
+                holder.equipmentLocationText = convertView.findViewById(R.id.equipment_fault_item_tv_location);
+                holder.equipmentNameText = convertView.findViewById(R.id.equipment_fault_item_tv_name);
+                holder.layout = convertView.findViewById(R.id.equipment_fault_item_layout);
                 convertView.setTag(holder);
             } else {
                 holder = (MyViewHolder) convertView.getTag();

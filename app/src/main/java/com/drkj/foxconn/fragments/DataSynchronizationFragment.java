@@ -2,7 +2,6 @@ package com.drkj.foxconn.fragments;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -17,8 +16,7 @@ import android.widget.Toast;
 
 import com.drkj.foxconn.App;
 import com.drkj.foxconn.R;
-import com.drkj.foxconn.activties.MainActivity;
-import com.drkj.foxconn.activties.NewMainActivity;
+import com.drkj.foxconn.activties.NewMainKotlinActivity;
 import com.drkj.foxconn.bean.EndTaskBean;
 import com.drkj.foxconn.bean.EndTaskResultBean;
 import com.drkj.foxconn.bean.EquipmentFaultBean;
@@ -30,30 +28,18 @@ import com.drkj.foxconn.bean.PictureUrlBean;
 import com.drkj.foxconn.bean.RegionResultBean;
 import com.drkj.foxconn.bean.StartTaskBean;
 import com.drkj.foxconn.bean.StartTaskResultBean;
-import com.drkj.foxconn.db.DbConstant;
 import com.drkj.foxconn.db.DbController;
 import com.drkj.foxconn.net.NetClient;
-import com.drkj.foxconn.util.FileUtil;
 import com.drkj.foxconn.util.SpUtil;
-import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import javax.security.auth.login.LoginException;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -77,7 +63,7 @@ public class DataSynchronizationFragment extends Fragment {
 
     private Handler mHandler;
 
-    private NewMainActivity activity;
+    private NewMainKotlinActivity activity;
 
     @Nullable
     @Override
@@ -132,7 +118,7 @@ public class DataSynchronizationFragment extends Fragment {
                 }
             }
         };
-        activity = (NewMainActivity) getActivity();
+        activity = (NewMainKotlinActivity) getActivity();
         return view;
     }
 
@@ -302,6 +288,7 @@ public class DataSynchronizationFragment extends Fragment {
                                 pictureBean.setPath(null);//必须删除，这不是服务器要得字段
                                 pictureUrlBeanList.add(pictureUrlBean);
                                 if (pictureUrlBeanList.size() >= faultBean.getEquipmentFeedbackPictureList().size()) {
+                                    faultBean.setLocation(null);
                                     Message message = new Message();
                                     message.obj = faultBean;
                                     message.what = UPDATE_EQUIPMENT_FAULT;
@@ -331,6 +318,7 @@ public class DataSynchronizationFragment extends Fragment {
                                 pictureBean.setPath(null);//必须删除，这不是服务器要得字段
                                 pictureUrlBeanList.add(pictureUrlBean);
                                 if (pictureUrlBeanList.size() >= bean.getLocalFeedbackPictureList().size()) {
+                                    bean.setLoaction(null);
                                     Message message = new Message();
                                     message.obj = bean;
                                     message.what = UPDATE_FEEDBACK;

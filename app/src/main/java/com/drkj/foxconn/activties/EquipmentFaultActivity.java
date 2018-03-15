@@ -13,13 +13,14 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.drkj.foxconn.BaseActivity;
 import com.drkj.foxconn.R;
 import com.drkj.foxconn.adapter.ImageCaptureAdapter;
 import com.drkj.foxconn.bean.EquipmentFaultBean;
-import com.drkj.foxconn.bean.FeedbackBean;
+import com.drkj.foxconn.bean.EquipmentResultBean;
 import com.drkj.foxconn.db.DbController;
 import com.drkj.foxconn.mvp.presenter.EquipmentFaultPresenter;
 import com.drkj.foxconn.mvp.view.IEquipmentFaultView;
@@ -43,6 +44,12 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
     Spinner typeSpinner;
     @BindView(R.id.equipment_fault_recycler_view)
     RecyclerView mRecyclerView;
+    @BindView(R.id.equipment_fault_tv_location)
+    TextView tvLocation;
+    @BindView(R.id.equipment_fault_tv_name)
+    TextView tvName;
+    @BindView(R.id.equipment_fault_tv_code)
+    TextView tvCode;
 
     private ImageCaptureAdapter mAdapter;
 
@@ -65,6 +72,13 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
         ButterKnife.bind(this);
         initView();
         equipmentFaultBean = new EquipmentFaultBean();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        presenter.queryEquipmentFault(nfcCardUtil.readPointData(intent, 0, 1));
     }
 
     private void initView() {
@@ -95,6 +109,9 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
             equipmentFaultBean.setContent(content.getText().toString());
             equipmentFaultBean.setType(type);
             equipmentFaultBean.setId(tempId);
+            equipmentFaultBean.setEquipmentName(tvName.getText().toString());
+            equipmentFaultBean.setEquipmentCode(tvCode.getText().toString());
+            equipmentFaultBean.setLocation(tvLocation.getText().toString());
 
             List<EquipmentFaultBean.EquipmentFeedbackPictureListBean> pictureBeanList = new ArrayList<>();
             for (File file : mAdapter.getAllData()) {
@@ -111,6 +128,9 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
             equipmentFaultBean.setContent(content.getText().toString());
             equipmentFaultBean.setType(type);
             equipmentFaultBean.setId(tempId);
+            equipmentFaultBean.setEquipmentCode(tvCode.getText().toString());
+            equipmentFaultBean.setLocation(tvLocation.getText().toString());
+            equipmentFaultBean.setEquipmentName(tvName.getText().toString());
             List<EquipmentFaultBean.EquipmentFeedbackPictureListBean> pictureBeanList = new ArrayList<>();
             for (File file : mAdapter.getAllData()) {
                 EquipmentFaultBean.EquipmentFeedbackPictureListBean pictureBean = new EquipmentFaultBean.EquipmentFeedbackPictureListBean();
@@ -134,6 +154,9 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
         equipmentFaultBean = bean;
 
         content.setText(bean.getContent());
+        tvCode.setText(bean.getEquipmentCode());
+        tvName.setText(bean.getEquipmentName());
+        tvLocation.setText(bean.getLocation());
 
         ArrayList<File> tempList = new ArrayList<>();
         for (EquipmentFaultBean.EquipmentFeedbackPictureListBean listBean : equipmentFaultBean.getEquipmentFeedbackPictureList()) {
@@ -199,6 +222,22 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
     @Override
     public void onReceive(@NotNull String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNfcReceiveFailed() {
+        Toast.makeText(this, "读取失败,请重新刷卡", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNfcReceive(@NotNull EquipmentResultBean.DataBean bean, @NotNull String location, @NotNull String nfcCode) {
+        if (bean.getName() != null) {
+            tvName.setText(bean.getName());
+            tvLocation.setText(location);
+            tvCode.setText(bean.getCode());
+        } else {
+            Toast.makeText(this, "没有搜索到位置代码:" + nfcCode, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

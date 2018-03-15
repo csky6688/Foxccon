@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#f1f1f1"
     android:orientation="vertical"
-    tools:context="com.drkj.foxconn.activties.NewMainActivity">
+    tools:context="com.drkj.foxconn.activties.NewMainKotlinActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"

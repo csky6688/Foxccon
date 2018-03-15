@@ -93,7 +93,7 @@ public class FeedbackFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Toast.makeText(getActivity(), "onStart->Feedback", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "onStart->Feedback", Toast.LENGTH_SHORT).show();
         feedbackBeanList = DbController.getInstance().queryAllFeedback();
         mAdapter = new FeedbackAdapter(getActivity(), feedbackBeanList);
         listView.setAdapter(mAdapter);
@@ -102,7 +102,7 @@ public class FeedbackFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Toast.makeText(getActivity(), "onResume->Feedback", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "onResume->Feedback", Toast.LENGTH_SHORT).show();
         feedbackBeanList = DbController.getInstance().queryAllFeedback();
         mAdapter = new FeedbackAdapter(getActivity(), feedbackBeanList);
         listView.setAdapter(mAdapter);

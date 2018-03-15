@@ -31,9 +31,9 @@
         <activity android:name=".activties.FeedbackActivity" />
         <activity android:name=".activties.EquipmentFaultActivity" />
 
-        <activity android:name=".activties.NewMainActivity" />
+        <activity android:name=".activties.NewMainKotlinActivity" />
 
-        <activity android:name=".activties.NewLoginActivity">
+        <activity android:name=".activties.NewLoginKotlinActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

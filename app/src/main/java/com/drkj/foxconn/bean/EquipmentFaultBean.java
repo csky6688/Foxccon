@@ -32,6 +32,7 @@ public class EquipmentFaultBean {
     private String equipmentId;
     private String equipmentName;
     private String id;
+    private String location;//非服务器需要的内容
     private String type;
     private String updateBy;
     private String updateDate;
@@ -104,6 +105,14 @@ public class EquipmentFaultBean {
 
     public String getType() {
         return type;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public void setType(String type) {

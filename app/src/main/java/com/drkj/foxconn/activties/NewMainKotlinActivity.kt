@@ -1,5 +1,6 @@
 package com.drkj.foxconn.activties
 
+import android.content.Intent
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.view.View
@@ -11,12 +12,13 @@ import com.drkj.foxconn.fragments.FeedbackFragment
 import com.drkj.foxconn.fragments.OfflineCheckFragment
 import com.drkj.foxconn.mvp.presenter.MainPresenter
 import com.drkj.foxconn.mvp.view.IMainView
+import com.drkj.foxconn.util.NfcCardUtil
 import kotterknife.bindView
 
 /**
  * Created by VeronicaRen on 2018/3/7 in Kotlin
  */
-class NewMainActivity : BaseActivity(), IMainView, View.OnClickListener {
+class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListener {
 
     public val FRAGMENT_SYNC = 0
     public val FRAGMENT_OFFLINE_CHECK = 1
@@ -24,6 +26,8 @@ class NewMainActivity : BaseActivity(), IMainView, View.OnClickListener {
     val FRAGMENT_FAULT = 3
 
     private val presenter = MainPresenter()
+
+    private var nfcCardUtil: NfcCardUtil? = null
 
     private val mConentView: FrameLayout by bindView(R.id.new_main_content)
 
@@ -43,9 +47,38 @@ class NewMainActivity : BaseActivity(), IMainView, View.OnClickListener {
 
     private var currentFragment: Fragment? = null
 
+    interface OnNfcListener {
+        fun onNfcReceived(nfcCode: String)
+    }
+
+    private var onNfcListener: OnNfcListener? = null
+
+    fun setOnNfcListener(onNfcListener: OnNfcListener) {
+        this.onNfcListener = onNfcListener
+    }
+
     override fun setLayout(): Int = R.layout.activity_new_main
 
+    override fun onResume() {
+        super.onResume()
+        nfcCardUtil!!.startNfc()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        nfcCardUtil!!.stopNfc()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        onNfcListener?.onNfcReceived(nfcCardUtil!!.readPointData(intent, 0, 1))
+//        nfcCardUtil!!.readPointData(intent, 0, 1)
+    }
+
     override fun initView() {
+        nfcCardUtil = NfcCardUtil(this)
+
         val dataSyncFragment = DataSynchronizationFragment()
         val offlineCheckFragment = OfflineCheckFragment()
         val feedbackFragment = FeedbackFragment()
@@ -63,7 +96,7 @@ class NewMainActivity : BaseActivity(), IMainView, View.OnClickListener {
 
         switchFragment(fragmentList[FRAGMENT_SYNC]).commit()//默认加载第一个界面
         tvTitle.text = "数据同步"
-        hideTab()
+//        hideTab()
     }
 
     override fun onClick(view: View?) {
