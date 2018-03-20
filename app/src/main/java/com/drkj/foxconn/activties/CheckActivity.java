@@ -43,8 +43,13 @@ public class CheckActivity extends BaseActivity {
     }
 
     private void initView() {
+        bean = (EquipmentResultBean.DataBean) getIntent().getSerializableExtra("equipment");
         String nfcCode = getIntent().getStringExtra("nfcCode");
-        bean = DbController.getInstance().queryEquipmentByNfcCode(nfcCode);
+
+        if (bean == null) {
+            bean = DbController.getInstance().queryEquipmentByNfcCode(nfcCode);
+        }
+
         equipmentNameText.setText(bean.getName());
         equipmentCodeText.setText(bean.getCode());
 
@@ -62,16 +67,12 @@ public class CheckActivity extends BaseActivity {
             }
         });
         attrList.setAdapter(mAdapter);
-
     }
 
     @OnClick(R.id.image_save_check)
     void saveCheck() {
         DbController.getInstance().updateEquipmentAttribute(mAdapter.getBean());
-        for (EquipmentResultBean.DataBean.EquipmentAttributeListBean attributeListBean : mAdapter.getBean().getEquipmentAttributeList()) {
-//            DbController.getInstance().updateEquipmentAttribute(attributeListBean);
-            DbController.getInstance().updateEquipmentCheck(mAdapter.getBean());
-            finish();
-        }
+        DbController.getInstance().updateEquipmentCheck(mAdapter.getBean());
+        finish();
     }
 }

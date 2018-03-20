@@ -21,25 +21,47 @@ class EquipmentFaultPresenter : BasePresenter<IEquipmentFaultView>() {
 
     fun queryEquipmentFault(nfcCode: String) {
         if (!TextUtils.isEmpty(nfcCode)) {
-            val newCode = "XJ${nfcCode.trim().substring(0, 6)}"
+            if (nfcCode.contains("XJ")) {
+                val equipmentResultBean = DbController.getInstance().queryEquipmentByNfcCode(nfcCode)
 
-            val equipmentResultBean = DbController.getInstance().queryEquipmentByNfcCode(newCode)
+                val location = StringBuilder()
 
-            val location = StringBuilder()
+                if (!TextUtils.isEmpty(equipmentResultBean.buildingId)) {
+                    location.append(DbController.getInstance().queryRegionInfoById(equipmentResultBean.buildingId).name)
+                }
 
-            if (!TextUtils.isEmpty(equipmentResultBean.buildingId)) {
-                location.append(DbController.getInstance().queryRegionInfoById(equipmentResultBean.buildingId).name)
+                if (!TextUtils.isEmpty(equipmentResultBean.storeyId)) {
+                    location.append(DbController.getInstance().queryRegionInfoById(equipmentResultBean.storeyId).name)
+                }
+
+                if (!TextUtils.isEmpty(equipmentResultBean.roomId)) {
+                    location.append(DbController.getInstance().queryRegionInfoById(equipmentResultBean.roomId).name)
+                }
+
+                rootView!!.onNfcReceive(equipmentResultBean, location.toString(), nfcCode)
+            } else {
+                val newCode = "XJ${nfcCode.trim().substring(0, 6)}"
+
+//                val newCode = nfcCode
+
+                val equipmentResultBean = DbController.getInstance().queryEquipmentByNfcCode(newCode)
+
+                val location = StringBuilder()
+
+                if (!TextUtils.isEmpty(equipmentResultBean.buildingId)) {
+                    location.append(DbController.getInstance().queryRegionInfoById(equipmentResultBean.buildingId).name)
+                }
+
+                if (!TextUtils.isEmpty(equipmentResultBean.storeyId)) {
+                    location.append(DbController.getInstance().queryRegionInfoById(equipmentResultBean.storeyId).name)
+                }
+
+                if (!TextUtils.isEmpty(equipmentResultBean.roomId)) {
+                    location.append(DbController.getInstance().queryRegionInfoById(equipmentResultBean.roomId).name)
+                }
+
+                rootView!!.onNfcReceive(equipmentResultBean, location.toString(), newCode)
             }
-
-            if (!TextUtils.isEmpty(equipmentResultBean.storeyId)) {
-                location.append(DbController.getInstance().queryRegionInfoById(equipmentResultBean.storeyId).name)
-            }
-
-            if (!TextUtils.isEmpty(equipmentResultBean.roomId)) {
-                location.append(DbController.getInstance().queryRegionInfoById(equipmentResultBean.roomId).name)
-            }
-
-            rootView!!.onNfcReceive(equipmentResultBean, location.toString(), newCode)
         } else {
             rootView!!.onNfcReceiveFailed()
         }

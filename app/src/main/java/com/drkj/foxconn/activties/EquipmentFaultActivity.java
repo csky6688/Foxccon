@@ -7,6 +7,7 @@ import android.provider.MediaStore;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,7 +25,9 @@ import com.drkj.foxconn.bean.EquipmentResultBean;
 import com.drkj.foxconn.db.DbController;
 import com.drkj.foxconn.mvp.presenter.EquipmentFaultPresenter;
 import com.drkj.foxconn.mvp.view.IEquipmentFaultView;
+import com.drkj.foxconn.util.DateUtil;
 import com.drkj.foxconn.util.FileUtil;
+import com.zltd.decoder.DecoderManager;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,11 +39,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class EquipmentFaultActivity extends BaseActivity implements ImageCaptureAdapter.OnItemClickListener, IEquipmentFaultView {
+public class EquipmentFaultActivity extends BaseActivity implements ImageCaptureAdapter.OnItemClickListener, IEquipmentFaultView, DecoderManager.IDecoderStatusListener {
 
     @BindView(R.id.edit_content)
     EditText content;
-    @BindView(R.id.spinner_type_choose)
+    @BindView(R.id.fault_spinner_type_choose)
     Spinner typeSpinner;
     @BindView(R.id.equipment_fault_recycler_view)
     RecyclerView mRecyclerView;
@@ -65,6 +68,10 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
 
     private ArrayAdapter<String> spinnerAdapter;
 
+    private boolean isResume = false;
+
+    private DecoderManager decoderManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +79,22 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
         ButterKnife.bind(this);
         initView();
         equipmentFaultBean = new EquipmentFaultBean();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isResume = true;
+//        decoderManager.connectDecoderSRV();
+        decoderManager.addDecoderStatusListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isResume = false;
+//        decoderManager.disconnectDecoderSRV();
+        decoderManager.removeDecoderStatusListener(this);
     }
 
     @Override
@@ -84,6 +107,8 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
     private void initView() {
         mAdapter = new ImageCaptureAdapter(this);
         presenter.bindView(this);
+
+        decoderManager = DecoderManager.getInstance();
 
         typeList.add("人为");
         typeList.add("非人为");
@@ -104,14 +129,22 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
 
     @OnClick(R.id.image_save_feedback)
     void saveFeedback() {
+        if (TextUtils.isEmpty(tvLocation.getText())) {
+            Toast.makeText(this, "请扫描设备信息", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String tempId = String.valueOf(System.currentTimeMillis());
         if (TextUtils.isEmpty(equipmentFaultId)) {
+            equipmentFaultBean.setCreateDate(DateUtil.INSTANCE.getDate());
             equipmentFaultBean.setContent(content.getText().toString());
             equipmentFaultBean.setType(type);
             equipmentFaultBean.setId(tempId);
+            equipmentFaultBean.setCreateDate(DateUtil.INSTANCE.getDate());
             equipmentFaultBean.setEquipmentName(tvName.getText().toString());
             equipmentFaultBean.setEquipmentCode(tvCode.getText().toString());
             equipmentFaultBean.setLocation(tvLocation.getText().toString());
+//            equipmentFaultBean.setCreateDate(DateUtil.INSTANCE.getDate());
 
             List<EquipmentFaultBean.EquipmentFeedbackPictureListBean> pictureBeanList = new ArrayList<>();
             for (File file : mAdapter.getAllData()) {
@@ -125,6 +158,7 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
             DbController.getInstance().saveEquipmentFault(equipmentFaultBean);
             finish();
         } else {
+            equipmentFaultBean.setUpdateDate(DateUtil.INSTANCE.getDate());
             equipmentFaultBean.setContent(content.getText().toString());
             equipmentFaultBean.setType(type);
             equipmentFaultBean.setId(tempId);
@@ -230,13 +264,75 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
     }
 
     @Override
-    public void onNfcReceive(@NotNull EquipmentResultBean.DataBean bean, @NotNull String location, @NotNull String nfcCode) {
+    public void onNfcReceive(@NotNull final EquipmentResultBean.DataBean bean, @NotNull final String location, @NotNull final String nfcCode) {
         if (bean.getName() != null) {
-            tvName.setText(bean.getName());
-            tvLocation.setText(location);
-            tvCode.setText(bean.getCode());
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    tvName.setText(bean.getName());
+                    tvLocation.setText(location);
+                    tvCode.setText(bean.getCode());
+                }
+            });
         } else {
-            Toast.makeText(this, "没有搜索到位置代码:" + nfcCode, Toast.LENGTH_SHORT).show();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(EquipmentFaultActivity.this, "没有搜索到代码:" + nfcCode, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onDecoderStatusChanage(int i) {
+
+    }
+
+    @Override
+    public void onDecoderResultChanage(String s, String s1) {
+        if (!TextUtils.isEmpty(s)) {
+            presenter.queryEquipmentFault(s);
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(EquipmentFaultActivity.this, "扫描失败，请重试", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BUTTON_A:
+                if (isResume) {
+                    decoderManager.connectDecoderSRV();
+                    decoderManager.dispatchScanKeyEvent(event);
+                }
+                return true;
+            case KeyEvent.KEYCODE_BACK:
+                finish();
+                break;
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BUTTON_A:
+                if (isResume) {
+                    decoderManager.disconnectDecoderSRV();
+                    decoderManager.dispatchScanKeyEvent(event);
+                }
+                return true;
+            default:
+                return super.onKeyDown(keyCode, event);
         }
     }
 

@@ -50,7 +50,7 @@ class OfflineCheckAdapter(context: Context, dataBeans: List<EquipmentResultBean.
 
         val dataBean1 = DbController.getInstance().queryRegionInfoById(mDataBeans[position].storeyId)
         val dataBean2 = DbController.getInstance().queryRegionInfoById(mDataBeans[position].roomId)
-        val location = dataBean1.name + dataBean2.name
+        val location = dataBean0.name + dataBean1.name + dataBean2.name
         holder.equipmentLocationText.text = location
 
 

@@ -31,7 +31,7 @@ public class FeedbackBean {
     private String createDate;
     private String createName;
     private String id;
-    private String loaction;
+    private String location;
     private String regionCode;
     private String regionId;
     private String regionName;
@@ -81,12 +81,12 @@ public class FeedbackBean {
         this.id = id;
     }
 
-    public String getLoaction() {
-        return loaction;
+    public String getLocation() {
+        return location;
     }
 
-    public void setLoaction(String loaction) {
-        this.loaction = loaction;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getRegionCode() {

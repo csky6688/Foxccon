@@ -114,7 +114,7 @@
                 android:textSize="18sp" />
 
             <Spinner
-                android:id="@+id/spinner_type_choose"
+                android:id="@+id/fault_spinner_type_choose"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"

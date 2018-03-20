@@ -29,6 +29,7 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:visibility="gone"
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:background="@drawable/shape_circle_stoken"

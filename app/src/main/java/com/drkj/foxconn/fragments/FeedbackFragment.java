@@ -55,8 +55,6 @@ public class FeedbackFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-//        MyAdapter adapter = new MyAdapter();
-//        listView.setAdapter(adapter);
         feedbackBeanList = DbController.getInstance().queryAllFeedback();
         mAdapter = new FeedbackAdapter(getActivity(), feedbackBeanList);
         listView.setAdapter(mAdapter);
@@ -93,7 +91,6 @@ public class FeedbackFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-//        Toast.makeText(getActivity(), "onStart->Feedback", Toast.LENGTH_SHORT).show();
         feedbackBeanList = DbController.getInstance().queryAllFeedback();
         mAdapter = new FeedbackAdapter(getActivity(), feedbackBeanList);
         listView.setAdapter(mAdapter);
@@ -102,60 +99,8 @@ public class FeedbackFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-//        Toast.makeText(getActivity(), "onResume->Feedback", Toast.LENGTH_SHORT).show();
         feedbackBeanList = DbController.getInstance().queryAllFeedback();
         mAdapter = new FeedbackAdapter(getActivity(), feedbackBeanList);
         listView.setAdapter(mAdapter);
     }
-
-//    class MyAdapter extends BaseAdapter {
-//
-//        @Override
-//        public int getCount() {
-//            return 10;
-//        }
-//
-//        @Override
-//        public Object getItem(int position) {
-//            return null;
-//        }
-//
-//        @Override
-//        public long getItemId(int position) {
-//            return 0;
-//        }
-//
-//        @Override
-//        public View getView(int position, View convertView, ViewGroup parent) {
-//            MyViewHolder holder = null;
-//            if (convertView == null) {
-//                convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_feedback_list, null);
-//                holder = new MyViewHolder();
-//                holder.equipmentLocationText = convertView.findViewById(R.id.equipment_falut_tv_location);
-//                holder.equipmentNameText = convertView.findViewById(R.id.equipment_fault_tv_name);
-//                holder.layout = convertView.findViewById(R.id.equipment_fault_layout_item);
-//                convertView.setTag(holder);
-//            } else {
-//                holder = (MyViewHolder) convertView.getTag();
-//            }
-//            switch (position % 3) {
-//                case 0:
-//                    holder.layout.setBackgroundResource(R.drawable.ic_orange_bg);
-//                    break;
-//                case 1:
-//                    holder.layout.setBackgroundResource(R.drawable.ic_green_bg);
-//                    break;
-//                case 2:
-//                    holder.layout.setBackgroundResource(R.drawable.ic_blue_bg);
-//                    break;
-//            }
-//            return convertView;
-//        }
-//    }
-//
-//    class MyViewHolder {
-//        public TextView equipmentLocationText;
-//        public TextView equipmentNameText;
-//        public LinearLayout layout;
-//    }
 }

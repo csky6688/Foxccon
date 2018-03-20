@@ -49,6 +49,7 @@
                     android:textColor="@color/white"
                     android:textSize="12sp"
                     android:textStyle="bold"
+                    android:visibility="gone"
                     tools:text="N1" />
 
                 <TextView

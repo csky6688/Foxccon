@@ -17,10 +17,12 @@ import com.drkj.foxconn.adapter.OfflineCheckAdapter;
 import com.drkj.foxconn.R;
 import com.drkj.foxconn.activties.CheckActivity;
 import com.drkj.foxconn.bean.EquipmentResultBean;
+import com.drkj.foxconn.bean.RegionResultBean;
 import com.drkj.foxconn.db.DbController;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.List;
 
 import butterknife.BindView;
@@ -32,8 +34,6 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
     @BindView(R.id.list_equipment)
     ListView listView;
     List<EquipmentResultBean.DataBean> dataBeans;
-
-//    MyAdapter adapter;
 
     public OfflineCheckAdapter offlineCheckAdapter;
 
@@ -50,10 +50,6 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //FIXME 暂时将数据刷新移动到onResume方法中
-//        dataBeans = DbController.getInstance().queryAllEquipment();
-//        adapter = new MyAdapter(dataBeans);
-//        listView.setAdapter(adapter);
         activity = (NewMainKotlinActivity) getActivity();
         activity.setOnNfcListener(this);
     }
@@ -82,20 +78,29 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
         Log.e("fragment", "onResume");
     }
 
-    public void updateData() {
-        dataBeans = DbController.getInstance().queryAllEquipment();
-        offlineCheckAdapter = new OfflineCheckAdapter(getContext(), dataBeans);
-        listView.setAdapter(offlineCheckAdapter);
-    }
-
     @Override
     public void onNfcReceived(@NotNull String nfcCode) {
         if (!isHidden()) {
             if (!TextUtils.isEmpty(nfcCode)) {
                 nfcCode = "XJ" + nfcCode.trim().substring(0, 6);
+                EquipmentResultBean.DataBean equipmentBean = DbController.getInstance().queryEquipmentByNfcCode(nfcCode);
+                RegionResultBean.DataBean regionBean = DbController.getInstance().queryRegionByNfcCode(nfcCode);
 
+                if (equipmentBean != null) {
+                    Intent intent = new Intent(activity, CheckActivity.class);
+                    intent.putExtra("equipment", (Serializable) equipmentBean);
+                    startActivity(intent);
+                } else if (regionBean != null) {
+                    if (regionBean.getType().equals("1")) {//楼栋
 
+                    } else if (regionBean.getType().equals("2")) {//楼层
 
+                    } else if (regionBean.getType().equals("3")) {//机房
+
+                    } else {
+                        Toast.makeText(activity, "没有:" + nfcCode + "的信息", Toast.LENGTH_SHORT).show();
+                    }
+                }
                 Toast.makeText(activity, "收到:" + nfcCode, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(activity, "读取失败，请重新刷卡", Toast.LENGTH_SHORT).show();

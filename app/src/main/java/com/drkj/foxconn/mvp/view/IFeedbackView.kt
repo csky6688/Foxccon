@@ -12,7 +12,9 @@ interface IFeedbackView : IBaseView {
 
     fun onDeployFeedback(bean: FeedbackBean)
 
-    fun onNfcReceive(bean: FeedbackBean, nfcCode: String)
+    fun onNfcCodeReceive(location: String, locationCode: String, nfcCode: String)
+
+    fun onNoNfcCode(nfcCode: String)
 
     fun onNfcReceiveFailed()
 }

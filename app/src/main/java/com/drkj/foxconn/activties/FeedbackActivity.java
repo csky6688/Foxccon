@@ -9,16 +9,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,11 +23,13 @@ import com.drkj.foxconn.BaseActivity;
 import com.drkj.foxconn.R;
 import com.drkj.foxconn.adapter.ImageCaptureAdapter;
 import com.drkj.foxconn.bean.FeedbackBean;
-import com.drkj.foxconn.bean.FeedbackResultBean;
+import com.drkj.foxconn.bean.RegionResultBean;
 import com.drkj.foxconn.db.DbController;
 import com.drkj.foxconn.mvp.presenter.FeedbackPresenter;
 import com.drkj.foxconn.mvp.view.IFeedbackView;
+import com.drkj.foxconn.util.DateUtil;
 import com.drkj.foxconn.util.FileUtil;
+import com.zltd.decoder.DecoderManager;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -42,18 +41,20 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapter.OnItemClickListener, IFeedbackView {
+public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapter.OnItemClickListener, IFeedbackView, DecoderManager.IDecoderStatusListener {
 
     FeedbackBean feedbackBean;
 
     @BindView(R.id.edit_content)
     EditText content;
-    @BindView(R.id.spinner_type_choose)
+    @BindView(R.id.feedback_spinner_type_choose)
     Spinner typeSpinner;
     @BindView(R.id.feedback_recycler_view)
     RecyclerView mRecyclerView;
     @BindView(R.id.feedback_tv_location)
     TextView tvLocation;
+    @BindView(R.id.feedback_tv_location_code)
+    TextView tvLocationCode;
 
     private ImageCaptureAdapter mAdapter;
 
@@ -67,6 +68,10 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
 
     private ArrayAdapter<String> spinnerAdapter;
 
+    private DecoderManager decoderManager;
+
+    private boolean isResume = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +79,22 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
         ButterKnife.bind(this);
         initView();
         feedbackBean = new FeedbackBean();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isResume = true;
+//        decoderManager.connectDecoderSRV();
+        decoderManager.addDecoderStatusListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isResume = false;
+//        decoderManager.disconnectDecoderSRV();
+        decoderManager.removeDecoderStatusListener(this);
     }
 
     @Override
@@ -86,6 +107,8 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
     private void initView() {
         mAdapter = new ImageCaptureAdapter(this);
         presenter.bindView(this);
+
+        decoderManager = DecoderManager.getInstance();
 
         typeList.add("人为");
         typeList.add("非人为");
@@ -126,12 +149,21 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
 
     @OnClick(R.id.image_save_feedback)
     void saveFeedback() {
+        if (TextUtils.isEmpty(tvLocation.getText())) {
+            Toast.makeText(this, "请扫描位置信息", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String tempId = String.valueOf(System.currentTimeMillis());
         if (TextUtils.isEmpty(feedbackId)) {
+            feedbackBean.setCreateDate(DateUtil.INSTANCE.getDate());
             feedbackBean.setContent(content.getText().toString());
             feedbackBean.setType(type);
             feedbackBean.setId(tempId);
-            feedbackBean.setLoaction(tvLocation.getText().toString());
+            feedbackBean.setLocation(tvLocation.getText().toString());
+            feedbackBean.setRegionName(tvLocation.getText().toString());
+            feedbackBean.setRegionCode(tvLocationCode.getText().toString());
+            feedbackBean.setCreateDate(DateUtil.INSTANCE.getDate());
             List<FeedbackBean.LocalFeedbackPictureListBean> pictureBeanList = new ArrayList<>();
             for (File file : mAdapter.getAllData()) {
                 FeedbackBean.LocalFeedbackPictureListBean pictureBean = new FeedbackBean.LocalFeedbackPictureListBean();
@@ -144,10 +176,13 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
             DbController.getInstance().saveFeedback(feedbackBean);
             finish();
         } else {
+            feedbackBean.setUpdateDate(DateUtil.INSTANCE.getDate());
             feedbackBean.setId(tempId);//必须重新更换id
             feedbackBean.setContent(content.getText().toString());
+            feedbackBean.setRegionName(tvLocation.getText().toString());
+            feedbackBean.setRegionCode(tvLocationCode.getText().toString());
             feedbackBean.setType(type);
-            feedbackBean.setLoaction(tvLocation.getText().toString());
+            feedbackBean.setLocation(tvLocation.getText().toString());
             List<FeedbackBean.LocalFeedbackPictureListBean> pictureListBeans = new ArrayList<>();
             for (File file : mAdapter.getAllData()) {
                 FeedbackBean.LocalFeedbackPictureListBean pictureBean = new FeedbackBean.LocalFeedbackPictureListBean();
@@ -180,8 +215,9 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
             mAdapter.addPic(new File(picBean.getPath()));
         }
         feedbackBean = bean;
-
         content.setText(bean.getContent());
+        tvLocation.setText(bean.getRegionName());
+        tvLocationCode.setText(bean.getRegionCode());
 
         ArrayList<File> tempList = new ArrayList<>();
         for (FeedbackBean.LocalFeedbackPictureListBean listBean : feedbackBean.getLocalFeedbackPictureList()) {
@@ -221,17 +257,91 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
     }
 
     @Override
-    public void onNfcReceive(@NotNull FeedbackBean bean, @NonNull String nfcCode) {
-        if (bean.getRegionName() != null) {
-            tvLocation.setText(bean.getRegionName());
+    public void onNfcCodeReceive(@NotNull final String location, @NotNull final String locationCode, @NonNull final String nfcCode) {
+        if (!TextUtils.isEmpty(location)) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    tvLocation.setText(location);
+                    tvLocationCode.setText(locationCode);
+                }
+            });
+            feedbackBean.setRegionCode(locationCode);
+            feedbackBean.setRegionName(location);
         } else {
-            Toast.makeText(this, "没有搜索到位置代码:" + nfcCode, Toast.LENGTH_SHORT).show();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(FeedbackActivity.this, "没有搜索到代码:" + nfcCode, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
     @Override
     public void onNfcReceiveFailed() {
-        Toast.makeText(this, "读取失败,请重新刷卡", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "读取失败,请重新读取", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNoNfcCode(@NotNull final String nfcCode) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(FeedbackActivity.this, "没有搜索到代码:" + nfcCode, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onDecoderStatusChanage(int i) {
+
+    }
+
+    @Override
+    public void onDecoderResultChanage(String s, String s1) {
+        if (!TextUtils.isEmpty(s)) {
+            presenter.queryFeedback(s);
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(FeedbackActivity.this, "扫描失败，请重试", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BUTTON_A:
+                if (isResume) {
+                    decoderManager.connectDecoderSRV();
+                    decoderManager.dispatchScanKeyEvent(event);
+                }
+                return true;
+            case KeyEvent.KEYCODE_BACK:
+                finish();
+                break;
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BUTTON_A:
+                if (isResume) {
+                    decoderManager.disconnectDecoderSRV();
+                    decoderManager.dispatchScanKeyEvent(event);
+                }
+                return true;
+            default:
+                return super.onKeyDown(keyCode, event);
+        }
     }
 
     @Override
@@ -242,29 +352,9 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
                 case 200:
                     Bundle bundle = data.getExtras();
                     Bitmap bitmap = (Bitmap) bundle.get("data");
-
-//                    ImageView img = new ImageView(this);
-//                    img.setLayoutParams(pic.getLayoutParams());
-//                    img.setImageBitmap(bitmap);
                     String path = FileUtil.saveBitmap(bitmap);
                     Log.e("file", path);
-//                    mBitmapList.add(new File(path));
                     mAdapter.addPic(new File(path));
-
-
-//                    pic.setImageBitmap(bitmap);
-//                    mAdapter.notifyDataSetChanged();
-
-
-//                    String name = DateFormat.format("yyyyMMdd_hhmmss", Calendar.getInstance(Locale.CHINA)) + ".jpg";
-//                    String imageUrlPath = FileUtil.saveFile(this, name, bitmap);
-//                    String imageBase = FileUtil.bitmapToString(bitmap);
-
-                    //TODO /rest/cgUploadController/upload 用来上传图片并返回url，这个url放在picture里面
-//                    feedbackBean.setPicture(imageBase);
-
-//                    imagePaths.add(imageUrlPath);
-//                    adapter.notifyDataSetChanged();
                     break;
             }
         }

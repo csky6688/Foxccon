@@ -12,14 +12,9 @@ import com.drkj.foxconn.bean.EquipmentFaultBean;
 import com.drkj.foxconn.bean.EquipmentResultBean;
 import com.drkj.foxconn.bean.FeedbackBean;
 import com.drkj.foxconn.bean.RegionResultBean;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import io.reactivex.Observable;
-import io.reactivex.Observer;
 
 /**
  * Created by VeronicaRen on 2018/2/26.
@@ -285,6 +280,25 @@ public class DbController {
         return dataBean;
     }
 
+    public String queryWholeLocation(String nfcCode) {
+        StringBuilder builder = new StringBuilder();
+        RegionResultBean.DataBean bean = queryRegionByNfcCode(nfcCode);
+        if (!TextUtils.isEmpty(bean.getName())) {
+            builder.append(bean.getName());
+        }
+
+//        while (true) {
+//
+//            if () {
+//
+//            } else {
+//                break;
+//            }
+//        }
+
+        return builder.toString();
+    }
+
     private int queryEquipmentById(String id) {
         SQLiteDatabase db = sqlHelper.getReadableDatabase();
         Cursor cursor = db.query(DbConstant.TABLE_EQUIPMENT, null, "id=?", new String[]{id}, null, null, null);
@@ -303,8 +317,10 @@ public class DbController {
             recordListBean.setCreateBy(cursor.getString(cursor.getColumnIndex("createBy")));
             recordListBean.setCreateName(cursor.getString(cursor.getColumnIndex("createName")));
             recordListBean.setEquipmentAttributeId(cursor.getString(cursor.getColumnIndex("equipmentId")));
+            recordListBean.setEquipmentAttributeName(cursor.getString(cursor.getColumnIndex("name")));
             recordListBean.setUpdateBy(cursor.getString(cursor.getColumnIndex("updateBy")));
             recordListBean.setUpdateName(cursor.getString(cursor.getColumnIndex("updateName")));
+            recordListBean.setValue(cursor.getDouble(cursor.getColumnIndex("value")));
             list.add(recordListBean);
         }
         endTaskBean.setTaskRecordDetailList(list);
@@ -367,7 +383,7 @@ public class DbController {
             feedbackBean.setCreateDate(cursor.getString(cursor.getColumnIndex("createDate")));
             feedbackBean.setCreateName(cursor.getString(cursor.getColumnIndex("createName")));
             feedbackBean.setId(cursor.getString(cursor.getColumnIndex("id")));
-            feedbackBean.setLoaction(cursor.getString(cursor.getColumnIndex("location")));
+            feedbackBean.setLocation(cursor.getString(cursor.getColumnIndex("location")));
             feedbackBean.setRegionCode(cursor.getString(cursor.getColumnIndex("regionCode")));
             feedbackBean.setRegionId(cursor.getString(cursor.getColumnIndex("regionId")));
             feedbackBean.setRegionName(cursor.getString(cursor.getColumnIndex("regionName")));
@@ -411,7 +427,7 @@ public class DbController {
             feedbackBean.setCreateDate(cursor.getString(cursor.getColumnIndex("createDate")));
             feedbackBean.setCreateName(cursor.getString(cursor.getColumnIndex("createName")));
             feedbackBean.setId(cursor.getString(cursor.getColumnIndex("id")));
-            feedbackBean.setLoaction(cursor.getString(cursor.getColumnIndex("location")));
+            feedbackBean.setLocation(cursor.getString(cursor.getColumnIndex("location")));
             feedbackBean.setRegionCode(cursor.getString(cursor.getColumnIndex("regionCode")));
             feedbackBean.setRegionId(cursor.getString(cursor.getColumnIndex("regionId")));
             feedbackBean.setRegionName(cursor.getString(cursor.getColumnIndex("regionName")));
