@@ -2,6 +2,7 @@ package com.drkj.foxconn.activties;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.LinearLayoutManager;
@@ -74,6 +75,8 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
 
     private String mCreateDate;
 
+    private String mNfcCode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,7 +147,7 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
             equipmentFaultBean.setId(tempId);
             equipmentFaultBean.setCreateDate(DateUtil.INSTANCE.getDate());
             equipmentFaultBean.setEquipmentName(tvName.getText().toString());
-            equipmentFaultBean.setEquipmentCode(tvCode.getText().toString());
+            equipmentFaultBean.setEquipmentCode(mNfcCode);
             equipmentFaultBean.setLocation(tvLocation.getText().toString());
 //            equipmentFaultBean.setCreateDate(DateUtil.INSTANCE.getDate());
 
@@ -165,7 +168,7 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
             equipmentFaultBean.setContent(content.getText().toString());
             equipmentFaultBean.setType(type);
             equipmentFaultBean.setId(tempId);
-            equipmentFaultBean.setEquipmentCode(tvCode.getText().toString());
+            equipmentFaultBean.setEquipmentCode(mNfcCode);
             equipmentFaultBean.setLocation(tvLocation.getText().toString());
             equipmentFaultBean.setEquipmentName(tvName.getText().toString());
             List<EquipmentFaultBean.EquipmentFeedbackPictureListBean> pictureBeanList = new ArrayList<>();
@@ -271,9 +274,11 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
         if (bean.getName() != null) {
 
             mCreateDate = bean.getCreateDate();
+
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    mNfcCode = nfcCode;
                     tvName.setText(bean.getName());
                     tvLocation.setText(location);
                     tvCode.setText(bean.getCode());

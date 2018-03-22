@@ -26,6 +26,8 @@ public class SpUtil {
 
     public static final String USER_ID = "userId";
 
+    public static final String BASE_URL = "baseRul";
+
     public static void putString(Context context, String key, String value) {
         SharedPreferences preferences = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();

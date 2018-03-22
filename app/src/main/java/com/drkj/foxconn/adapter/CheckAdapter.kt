@@ -9,11 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import com.drkj.foxconn.R
 import com.drkj.foxconn.bean.EquipmentResultBean
 import com.drkj.foxconn.util.DateUtil
+import com.orhanobut.logger.Logger
 
 /**
  * 离线巡检列表适配器
@@ -63,8 +65,9 @@ class CheckAdapter(context: Context, bean: EquipmentResultBean.DataBean) : BaseA
 
             override fun onTextChanged(charSequence: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 if (!TextUtils.isEmpty(charSequence)) {
-                    val value = charSequence.toString().toDouble()
+                    val value: Double
                     try {
+                        value = charSequence.toString().toDouble()
                         if (max <= 0 && value > min) {
                             holder.attrHint.setBackgroundColor(Color.GREEN)
                         } else if (max >= 0) {
@@ -79,8 +82,10 @@ class CheckAdapter(context: Context, bean: EquipmentResultBean.DataBean) : BaseA
                             holder.attrHint.setBackgroundColor(Color.parseColor("#ffc000"))
                         }
                         mBean.equipmentAttributeList[position].value = value
+                        Logger.t("check").e(mBean.equipmentAttributeList[position].value.toString())
                     } catch (e: Exception) {
-
+                        Logger.t("check").e(e.toString())
+//                        notifyDataSetChanged()
                     }
                 } else {
                     holder.attrHint.setBackgroundColor(Color.parseColor("#ffc000"))
@@ -92,19 +97,29 @@ class CheckAdapter(context: Context, bean: EquipmentResultBean.DataBean) : BaseA
 
             val range = "$min ~ $max"
 
+            val currentText = holder.attrValueText.text.toString()
             if (hasFocus) {
+                if (currentText == "0.0") {
+                    holder.attrValueText.text = ""
+                }
+
                 if (type == "0") {//阈值
                     mOnContentChangedListener?.onRangeChanged(range)
                 } else {//累加
                     mOnContentChangedListener?.onRangeChanged("")
                 }
             } else {
+                if (mBean.equipmentAttributeList[position].value == 0.0) {
+                    holder.attrValueText.text = "0.0"
+                }
                 mOnContentChangedListener?.onRangeChanged("")
             }
         }
 
         if (!TextUtils.isEmpty(mBean.isCheck) && mBean.isCheck == "true") {
             holder.attrValueText.text = mBean.equipmentAttributeList[position].value.toString()
+        } else {
+            holder.attrValueText.text = (0.0).toString()
         }
 
         if (!TextUtils.isEmpty(mBean.equipmentAttributeList[position].createDate)) {
@@ -123,7 +138,7 @@ class CheckAdapter(context: Context, bean: EquipmentResultBean.DataBean) : BaseA
     override fun getCount(): Int = mBean.equipmentAttributeList.size
 
     fun isAllNull(): Boolean {
-        return !mBean.equipmentAttributeList.any { it.value > 0 }
+        return !mBean.equipmentAttributeList.any { it.value != 0.0 }
     }
 
     inner class ViewHolder(itemView: View) {

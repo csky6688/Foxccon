@@ -1,6 +1,5 @@
 package com.drkj.foxconn.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,6 +26,7 @@ import com.drkj.foxconn.db.DbController;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -43,6 +43,8 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
     TextView tvStorey;
     @BindView(R.id.offline_check_tv_room)
     TextView tvRoom;
+    @BindView(R.id.offline_check_tv_equipment)
+    TextView tvEquipment;
 
     List<EquipmentResultBean.DataBean> dataBeans;
 
@@ -93,6 +95,7 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
         tvBuilding.setTextColor(ContextCompat.getColor(activity, R.color.gray));
         tvStorey.setTextColor(ContextCompat.getColor(activity, R.color.gray));
         tvRoom.setTextColor(ContextCompat.getColor(activity, R.color.gray));
+        tvEquipment.setTextColor(ContextCompat.getColor(activity, R.color.gray));
         target.setTextColor(ContextCompat.getColor(activity, R.color.black));
     }
 
@@ -119,8 +122,17 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
                             setTab(tvRoom);
                             setListBeans(DbController.getInstance().queryAllEquipmentByRoom(regionBean.getId()));
                             break;
+                        default:
+                            setTab(tvEquipment);
+                            List<EquipmentResultBean.DataBean> singleEquipmentList = new ArrayList<>();
+                            singleEquipmentList.add(DbController.getInstance().queryEquipmentByNfcCode(nfcCode));
+                            setListBeans(singleEquipmentList);
+                            break;
                     }
                 }
+
+//                if ()
+
             } else {
                 Toast.makeText(activity, "读取失败，请重新刷卡", Toast.LENGTH_SHORT).show();
             }

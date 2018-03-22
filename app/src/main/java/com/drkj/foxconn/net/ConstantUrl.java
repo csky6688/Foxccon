@@ -5,7 +5,7 @@ package com.drkj.foxconn.net;
  */
 
 public class ConstantUrl {
-    public static final String BASE_URL = "http://120.92.79.219:28080/jeecg/rest/";//测试服务器
+    public static String BASE_URL = "http://120.92.79.219:28080/xunjian/rest/";//测试服务器
 
 //    public static final String BASE_URL = "http://120.92.79.219:28080/jeecg/";//测试服务器
 

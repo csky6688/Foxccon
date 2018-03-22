@@ -83,8 +83,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="200dp"
-            android:scaleX="0.6"
-            android:scaleY="0.6"
             android:theme="@style/My_CheckBox" />
 
         <TextView

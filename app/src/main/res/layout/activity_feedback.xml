@@ -39,7 +39,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="位置:"
+                android:text="区域位置:"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 
@@ -49,9 +49,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:background="@null"
+                android:text="请扫描区域标签"
                 android:textColor="@color/black"
-                android:textSize="18sp"
-                tools:text="1栋2层5号机房" />
+                android:textSize="18sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -62,7 +62,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="位置代码:"
+                android:text="区域代码:"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 

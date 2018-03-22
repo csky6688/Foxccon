@@ -480,42 +480,28 @@ public class DbController {
         List<EndTaskBean> endBeanList = new ArrayList<>();
 
         for (EquipmentResultBean.DataBean bean : equipmentList) {
-            EndTaskBean tempEndBean = new EndTaskBean();
-            tempEndBean.setTaskId(taskId);
-            tempEndBean.setEquipmentId(bean.getId());
-            List<EndTaskBean.TaskRecordDetailListBean> endDetailBeanList = new ArrayList<>();
-            for (EquipmentResultBean.DataBean.EquipmentAttributeListBean attrBean : bean.getEquipmentAttributeList()) {
-                EndTaskBean.TaskRecordDetailListBean tempEndListBean = new EndTaskBean.TaskRecordDetailListBean();
-                tempEndListBean.setCreateBy(attrBean.getCreateBy().trim());
-                tempEndListBean.setCreateName(attrBean.getCreateName());
-                tempEndListBean.setEquipmentAttributeId(attrBean.getId());
-                tempEndListBean.setEquipmentAttributeName(attrBean.getName());
-                tempEndListBean.setUpdateBy(attrBean.getUpdateBy());
-                tempEndListBean.setUpdateName(attrBean.getUpdateName());
-                tempEndListBean.setValue(attrBean.getValue());
-                endDetailBeanList.add(tempEndListBean);
+            if (bean.isCheck().equals("true")) {
+                EndTaskBean tempEndBean = new EndTaskBean();
+                tempEndBean.setTaskId(taskId);
+                tempEndBean.setEquipmentId(bean.getId());
+                tempEndBean.setEquipmentName(bean.getName());
+                tempEndBean.setEquipmentCode(bean.getCode());
+                List<EndTaskBean.TaskRecordDetailListBean> endDetailBeanList = new ArrayList<>();
+                for (EquipmentResultBean.DataBean.EquipmentAttributeListBean attrBean : bean.getEquipmentAttributeList()) {
+                    EndTaskBean.TaskRecordDetailListBean tempEndListBean = new EndTaskBean.TaskRecordDetailListBean();
+                    tempEndListBean.setCreateBy(attrBean.getCreateBy().trim());
+                    tempEndListBean.setCreateName(attrBean.getCreateName());
+                    tempEndListBean.setEquipmentAttributeId(attrBean.getId());
+                    tempEndListBean.setEquipmentAttributeName(attrBean.getName());
+                    tempEndListBean.setUpdateBy(attrBean.getUpdateBy());
+                    tempEndListBean.setUpdateName(attrBean.getUpdateName());
+                    tempEndListBean.setValue(attrBean.getValue());
+                    endDetailBeanList.add(tempEndListBean);
+                }
+                tempEndBean.setTaskRecordDetailList(endDetailBeanList);
+                endBeanList.add(tempEndBean);
             }
-            tempEndBean.setTaskRecordDetailList(endDetailBeanList);
-            endBeanList.add(tempEndBean);
         }
-
-//        EndTaskBean endTaskBean = new EndTaskBean();
-//        List<EndTaskBean.TaskRecordDetailListBean> list = new ArrayList<>();
-//        SQLiteDatabase db = sqlHelper.getReadableDatabase();
-//        Cursor cursor = db.query(DbConstant.TABLE_EQUIPMENTATTRIBUTE, null, null, null, null, null, null);
-//        while (cursor.moveToNext()) {
-//            EndTaskBean.TaskRecordDetailListBean recordListBean = new EndTaskBean.TaskRecordDetailListBean();
-//            recordListBean.setCreateBy(cursor.getString(cursor.getColumnIndex("createBy")));
-//            recordListBean.setCreateName(cursor.getString(cursor.getColumnIndex("createName")));
-//            recordListBean.setEquipmentAttributeId(cursor.getString(cursor.getColumnIndex("equipmentId")));
-//            recordListBean.setEquipmentAttributeName(cursor.getString(cursor.getColumnIndex("name")));
-//            recordListBean.setUpdateBy(cursor.getString(cursor.getColumnIndex("updateBy")));
-//            recordListBean.setUpdateName(cursor.getString(cursor.getColumnIndex("updateName")));
-//            recordListBean.setValue(cursor.getDouble(cursor.getColumnIndex("value")));
-//            list.add(recordListBean);
-//        }
-//        endTaskBean.setTaskRecordDetailList(list);
-//        cursor.close();
         return endBeanList;
     }
 
@@ -970,6 +956,16 @@ public class DbController {
         db.delete(DbConstant.TABLE_EQUIPMENT, null, null);
         db.delete(DbConstant.TABLE_EQUIPMENTATTRIBUTE, null, null);
         db.delete(DbConstant.TABLE_REGION, null, null);
+        db.delete(DbConstant.TABLE_FEEDBACK, null, null);
+        db.delete(DbConstant.TABLE_EQUIPMENT_FAULT, null, null);
+        db.delete(DbConstant.TABLE_EQUIPMENT_FAULT_PICTURE_LIST, null, null);
+        db.delete(DbConstant.TABLE_FEEDBACK_PICTURE_LIST, null, null);
+    }
+
+    public void deleteAllCheckEquipment() {
+        SQLiteDatabase db = sqlHelper.getWritableDatabase();
+        db.delete(DbConstant.TABLE_EQUIPMENT, null, null);
+        db.delete(DbConstant.TABLE_EQUIPMENTATTRIBUTE, null, null);
     }
 
     /**

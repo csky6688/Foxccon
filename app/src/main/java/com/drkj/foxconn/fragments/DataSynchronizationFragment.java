@@ -78,6 +78,7 @@ public class DataSynchronizationFragment extends Fragment {
                 switch (msg.what) {
                     case UPDATE_FEEDBACK:
                         final FeedbackBean tempFeedbackBean = (FeedbackBean) msg.obj;
+                        Logger.t("feedback").e(new Gson().toJson(tempFeedbackBean));
                         NetClient.getInstance().getApi().feedback(SpUtil.getString(getContext(), "token"), tempFeedbackBean)
                                 .subscribeOn(Schedulers.newThread())
                                 .observeOn(AndroidSchedulers.mainThread())
@@ -88,19 +89,20 @@ public class DataSynchronizationFragment extends Fragment {
                                             Log.e("update", new Gson().toJson(tempFeedbackBean));
                                             DbController.getInstance().deleteFeedback(tempFeedbackBean);
 
-                                            Log.e("update", "现场反馈上传完成");
+                                            Log.e("update", "现场反馈(有图)上传完成");
                                         }
                                     }
                                 }, new Consumer<Throwable>() {
                                     @Override
                                     public void accept(Throwable throwable) throws Exception {
                                         throwable.printStackTrace();
-                                        Log.e("update", "现场反馈上传失败:" + throwable.getMessage());
+                                        Log.e("update", "现场反馈(有图)上传失败:" + throwable.getMessage());
                                     }
                                 });
                         break;
                     case UPDATE_EQUIPMENT_FAULT:
                         final EquipmentFaultBean tempEquipmentFaultBean = (EquipmentFaultBean) msg.obj;
+                        Logger.t("feedback").e(new Gson().toJson(tempEquipmentFaultBean));
                         NetClient.getInstance().getApi().equipmentFault(SpUtil.getString(getContext(), "token"), tempEquipmentFaultBean)
                                 .subscribeOn(Schedulers.newThread())
                                 .observeOn(AndroidSchedulers.mainThread())
@@ -110,13 +112,13 @@ public class DataSynchronizationFragment extends Fragment {
                                         if (TextUtils.equals(equipmentFaultResultBean.getRespCode(), "0")) {
                                             Log.e("update", new Gson().toJson(tempEquipmentFaultBean));
                                             DbController.getInstance().deleteEquipmentFault(tempEquipmentFaultBean);
-                                            Log.e("update", "设备故障上传完成");
+                                            Log.e("update", "设备故障(有图)上传完成");
                                         }
                                     }
                                 }, new Consumer<Throwable>() {
                                     @Override
                                     public void accept(Throwable throwable) throws Exception {
-                                        Log.e("update", "设备反馈上传失败:" + throwable.getMessage());
+                                        Log.e("update", "设备反馈(有图)上传失败:" + throwable.getMessage());
                                     }
                                 });
                         break;
@@ -129,7 +131,7 @@ public class DataSynchronizationFragment extends Fragment {
 
     @OnClick(R.id.image_download_data)
     void downloadData() {
-        if (DbController.getInstance().queryNotCheckCount() < DbController.getInstance().queryAllEquipment().size()) {
+        if (!TextUtils.isEmpty(SpUtil.getString(activity, SpUtil.TASK_ID))) {
             Toast.makeText(activity, "巡检未结束，不能下载数据", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -207,7 +209,13 @@ public class DataSynchronizationFragment extends Fragment {
         updateFault(faultBeans);
         updateFeedback(feedbackBeans);
 
-        for (final EndTaskBean endTaskBean : DbController.getInstance().queryAllEndTask(SpUtil.getString(getContext(), SpUtil.TASK_ID))) {
+        List<EndTaskBean> endTaskBeanList = DbController.getInstance().queryAllEndTask(SpUtil.getString(getContext(), SpUtil.TASK_ID));
+        if (endTaskBeanList.size() == 0) {
+            Toast.makeText(activity, "没有已巡检的数据", Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+            return;
+        }
+        for (final EndTaskBean endTaskBean : endTaskBeanList) {
             endTaskBean.setEquipmentType(SpUtil.getString(activity, SpUtil.TASK_TYPE));
             Logger.d(new Gson().toJson(endTaskBean));
             NetClient.getInstance().getApi().endTask(SpUtil.getString(getContext(), "token"), endTaskBean)
@@ -221,12 +229,15 @@ public class DataSynchronizationFragment extends Fragment {
                                 dialog.findViewById(R.id.dialog_btn_confirm).setVisibility(View.VISIBLE);
                                 TextView message = dialog.findViewById(R.id.dialog_message);
                                 message.setText("数据同步完成!");
-                                SpUtil.putString(activity, "taskId", null);
-                                if (DbController.getInstance().queryNotCheckCount() <= 0) {//全部巡检结束时，为巡检的数量为0
-                                    SpUtil.putString(activity, SpUtil.TASK_ID, "");//清除taskId
-                                    DbController.getInstance().deleteEquipmentCheck();
-                                }
+                                SpUtil.putString(activity, "taskId", "");
+                                DbController.getInstance().deleteAllCheckEquipment();
+//                                if (DbController.getInstance().queryNotCheckCount() <= 0) {//全部巡检结束时，为巡检的数量为0
+//                                    SpUtil.putString(activity, SpUtil.TASK_ID, "");//清除taskId
+//                                    DbController.getInstance().deleteEquipmentCheck();
+//                                }
                                 activity.getFragmentList().get(activity.getFRAGMENT_OFFLINE_CHECK()).onResume();
+                                activity.hideTab();
+                                activity.switchFragment(activity.getFragmentList().get(activity.getFRAGMENT_OFFLINE_CHECK()));
                                 dialog.findViewById(R.id.dialog_btn_confirm).setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
@@ -238,21 +249,26 @@ public class DataSynchronizationFragment extends Fragment {
                                 dialog.findViewById(R.id.avi).setVisibility(View.GONE);
                                 dialog.findViewById(R.id.dialog_btn_confirm).setVisibility(View.VISIBLE);
                                 TextView message = dialog.findViewById(R.id.dialog_message);
-                                message.setText("上传失败!");
+
+                                if (!TextUtils.isEmpty(endTaskResultBean.getMessage())) {
+                                    message.setText("上传失败\n" + endTaskResultBean.getMessage());
+                                } else {
+                                    message.setText("上传失败！");
+                                }
+
                                 dialog.findViewById(R.id.dialog_btn_confirm).setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         dialog.dismiss();
                                     }
                                 });
-//                                dialog.dismiss();
+                                dialog.dismiss();
                             }
                         }
                     }, new Consumer<Throwable>() {
                         @Override
                         public void accept(Throwable throwable) throws Exception {
                             throwable.printStackTrace();
-
                             dialog.findViewById(R.id.avi).setVisibility(View.GONE);
                             dialog.findViewById(R.id.dialog_btn_confirm).setVisibility(View.VISIBLE);
                             TextView message = dialog.findViewById(R.id.dialog_message);
@@ -316,16 +332,22 @@ public class DataSynchronizationFragment extends Fragment {
 //                        });
 //                    }
 //                });
+//        dialog.dismiss();
         activity.getFragmentList().get(activity.getFRAGMENT_FEEDBACK()).onResume();
         activity.getFragmentList().get(activity.getFRAGMENT_FAULT()).onResume();
     }
 
     @OnClick(R.id.image_start_check)
     void startTask() {
-//        if (!TextUtils.isEmpty(SpUtil.getString(activity,SpUtil.TASK_ID))){
-//            Toast.makeText(activity, "", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
+        if (DbController.getInstance().queryAllEquipment() == null || DbController.getInstance().queryAllEquipment().size() == 0) {
+            Toast.makeText(activity, "请下载数据", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!TextUtils.isEmpty(SpUtil.getString(activity, SpUtil.TASK_ID))) {
+            Toast.makeText(activity, "巡检任务未完成，不能创建新任务", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         final Dialog dialog = new Dialog(getActivity());
         dialog.setContentView(R.layout.dialog_data_synchronization_hint);
@@ -367,6 +389,7 @@ public class DataSynchronizationFragment extends Fragment {
     private void updateFault(List<EquipmentFaultBean> faultBeans) {
         for (final EquipmentFaultBean faultBean : faultBeans) {
             faultBean.setLocation(null);
+            faultBean.setCreateDate(null);
             if (faultBean.getEquipmentFeedbackPictureList().size() <= 0) {
                 NetClient.getInstance().getApi().equipmentFault(SpUtil.getString(getContext(), "token"), faultBean)
                         .subscribeOn(Schedulers.newThread())
@@ -425,6 +448,7 @@ public class DataSynchronizationFragment extends Fragment {
     private void updateFeedback(List<FeedbackBean> feedbackBeans) {
         for (final FeedbackBean bean : feedbackBeans) {
             bean.setLocation(null);
+            bean.setCreateDate(null);
             if (bean.getLocalFeedbackPictureList().size() <= 0) {
                 NetClient.getInstance().getApi().feedback(SpUtil.getString(getContext(), "token"), bean)
                         .subscribeOn(Schedulers.newThread())

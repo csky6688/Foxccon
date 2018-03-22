@@ -1,7 +1,10 @@
 package com.drkj.foxconn.activties
 
+import android.app.AlertDialog
 import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
+import android.view.KeyEvent
 import android.widget.*
 import com.drkj.foxconn.R
 import com.drkj.foxconn.mvp.presenter.LoginPresenter
@@ -28,6 +31,8 @@ class NewLoginKotlinActivity : BaseKotlinActivity(), ILoginView {
     private val tvVersion: TextView by bindView(R.id.login_tv_version)
 
     private var dialog: Dialog? = null
+
+    private var exitDialog: AlertDialog? = null
 
     override fun setLayout(): Int = R.layout.activity_login
 
@@ -86,7 +91,7 @@ class NewLoginKotlinActivity : BaseKotlinActivity(), ILoginView {
 
     override fun onUserInfoFinish() {
         startActivity(Intent(this, NewMainKotlinActivity::class.java))
-        finish()
+//        finish()
     }
 
     override fun onUserInfoFailed() {
@@ -95,6 +100,29 @@ class NewLoginKotlinActivity : BaseKotlinActivity(), ILoginView {
 
     override fun onReceiveMsg(msg: String) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_BACK -> {
+                exitDialog = AlertDialog.Builder(this)
+                        .setTitle("退出")
+                        .setMessage("是否退出？")
+                        .setNegativeButton("取消", object : DialogInterface.OnClickListener {
+                            override fun onClick(p0: DialogInterface?, p1: Int) {
+                                p0?.dismiss()
+                            }
+                        })
+                        .setPositiveButton("确定", object : DialogInterface.OnClickListener {
+                            override fun onClick(p0: DialogInterface?, p1: Int) {
+                                finish()
+                            }
+                        })
+                        .create()
+                exitDialog!!.show()
+            }
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     override fun onDestroy() {

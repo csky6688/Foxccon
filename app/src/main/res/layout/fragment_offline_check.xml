@@ -43,6 +43,18 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="机房"
+            android:textColor="#999999"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/offline_check_tv_equipment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="设备"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold" />

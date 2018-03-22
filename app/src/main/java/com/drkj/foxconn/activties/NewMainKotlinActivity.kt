@@ -117,7 +117,7 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
 
         decoderManager = DecoderManager.getInstance()
 
-//        hideTab()
+        hideTab()
     }
 
     override fun onClick(view: View?) {
@@ -191,7 +191,6 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
                 }
                 true
             }
-            KeyEvent.KEYCODE_BACK -> true
             else -> super.onKeyDown(keyCode, event)
         }
     }

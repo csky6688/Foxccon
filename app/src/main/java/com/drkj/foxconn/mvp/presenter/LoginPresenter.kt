@@ -63,6 +63,7 @@ class LoginPresenter : BasePresenter<ILoginView>() {
                                         SpUtil.putString(context, SpUtil.TASK_TYPE, it.equipmentType)
                                         SpUtil.putString(context, SpUtil.USER_ID, it.userId)
                                         SpUtil.putString(context, SpUtil.TASK_ID, "")//清除taskId
+                                        DbController.getInstance().deleteAllData()
                                     }
                             if (!TextUtils.isEmpty(SpUtil.getString(context, SpUtil.REAL_NAME)) && !TextUtils.isEmpty(SpUtil.getString(context, SpUtil.TASK_TYPE))) {
                                 rootView!!.onUserInfoFinish()

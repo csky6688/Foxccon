@@ -2,6 +2,7 @@ package com.drkj.foxconn.activties;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -72,6 +73,8 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
     private boolean isResume = false;
 
     private String mCreateDate;
+
+    private String mNfcCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,7 +166,7 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
             feedbackBean.setId(tempId);
             feedbackBean.setLocation(tvLocation.getText().toString());
             feedbackBean.setRegionName(tvLocation.getText().toString());
-            feedbackBean.setRegionCode(tvLocationCode.getText().toString());
+            feedbackBean.setRegionCode(mNfcCode);
             feedbackBean.setCreateDate(DateUtil.INSTANCE.getDate());
             List<FeedbackBean.LocalFeedbackPictureListBean> pictureBeanList = new ArrayList<>();
             for (File file : mAdapter.getAllData()) {
@@ -182,7 +185,7 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
             feedbackBean.setId(tempId);//必须重新更换id
             feedbackBean.setContent(content.getText().toString());
             feedbackBean.setRegionName(tvLocation.getText().toString());
-            feedbackBean.setRegionCode(tvLocationCode.getText().toString());
+            feedbackBean.setRegionCode(mNfcCode);
             feedbackBean.setType(type);
             feedbackBean.setLocation(tvLocation.getText().toString());
             List<FeedbackBean.LocalFeedbackPictureListBean> pictureListBeans = new ArrayList<>();
@@ -265,6 +268,7 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    mNfcCode = nfcCode;
                     tvLocation.setText(location);
                     tvLocationCode.setText(locationCode);
                 }

@@ -38,7 +38,7 @@ class FeedbackPresenter : BasePresenter<IFeedbackView>() {
                         }
                     }
                     location.append(bean.name)
-                    rootView!!.onNfcCodeReceive(bean.name, bean.code, nfcCode)
+                    rootView!!.onNfcCodeReceive(location.toString(), bean.code, nfcCode)
                 } else {
                     rootView!!.onNoNfcCode(nfcCode)
                 }
