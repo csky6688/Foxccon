@@ -20,4 +20,10 @@ object DateUtil {
         calendar.timeInMillis = System.currentTimeMillis()
         return formatter.format(calendar.time)
     }
+
+    fun getTransDate(timeStr: String): String {
+        val timeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
+        val targetFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.CHINA)
+        return targetFormat.format(timeFormat.parse(timeStr))
+    }
 }

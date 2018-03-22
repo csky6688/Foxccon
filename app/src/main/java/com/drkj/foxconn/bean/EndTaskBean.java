@@ -10,32 +10,50 @@ import java.util.List;
 
 public class EndTaskBean {
 
+
     /**
+     * buildingName : string
      * createBy : string
-     * createDate : 2018-01-30T01:44:36.092Z
+     * createDate : 2018-03-22T06:19:57.103Z
      * createName : string
+     * equipmentCode : string
+     * equipmentId : string
+     * equipmentName : string
+     * equipmentType : string
      * id : string
-     * inspectingPersonId : string
-     * name : string
-     * status : string
-     * taskRecordList : [{"createBy":"string","createDate":"2018-01-30T01:44:36.092Z","createName":"string","equipmentAttributeId":"string","equipmentId":"string","equipmentName":"string","id":"string","recordTime":"2018-01-30T01:44:36.092Z","taskId":"string","updateBy":"string","updateDate":"2018-01-30T01:44:36.092Z","updateName":"string","value":0}]
+     * roomName : string
+     * storeyName : string
+     * taskId : string
+     * taskRecordDetailList : [{"createBy":"string","createDate":"2018-03-22T06:19:57.103Z","createName":"string","equipmentAttributeId":"string","equipmentAttributeName":"string","id":"string","taskRecordId":"string","updateBy":"string","updateDate":"2018-03-22T06:19:57.103Z","updateName":"string","value":0}]
      * updateBy : string
-     * updateDate : 2018-01-30T01:44:36.092Z
+     * updateDate : 2018-03-22T06:19:57.103Z
      * updateName : string
      */
 
+    private String buildingName;
     private String createBy;
     private String createDate;
     private String createName;
     private String equipmentCode;
     private String equipmentId;
     private String equipmentName;
+    private String equipmentType;
     private String id;
+    private String roomName;
+    private String storeyName;
     private String taskId;
     private String updateBy;
     private String updateDate;
     private String updateName;
     private List<TaskRecordDetailListBean> taskRecordDetailList;
+
+    public String getBuildingName() {
+        return buildingName;
+    }
+
+    public void setBuildingName(String buildingName) {
+        this.buildingName = buildingName;
+    }
 
     public String getCreateBy() {
         return createBy;
@@ -59,10 +77,6 @@ public class EndTaskBean {
 
     public void setCreateName(String createName) {
         this.createName = createName;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getEquipmentCode() {
@@ -89,16 +103,44 @@ public class EndTaskBean {
         this.equipmentName = equipmentName;
     }
 
+    public String getEquipmentType() {
+        return equipmentType;
+    }
+
+    public void setEquipmentType(String equipmentType) {
+        this.equipmentType = equipmentType;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getRoomName() {
+        return roomName;
+    }
+
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
+    }
+
+    public String getStoreyName() {
+        return storeyName;
+    }
+
+    public void setStoreyName(String storeyName) {
+        this.storeyName = storeyName;
+    }
+
     public String getTaskId() {
         return taskId;
     }
 
     public void setTaskId(String taskId) {
         this.taskId = taskId;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getUpdateBy() {
@@ -125,27 +167,25 @@ public class EndTaskBean {
         this.updateName = updateName;
     }
 
-    public void setTaskRecordDetailList(List<TaskRecordDetailListBean> taskRecordDetailList) {
-        this.taskRecordDetailList = taskRecordDetailList;
-    }
-
     public List<TaskRecordDetailListBean> getTaskRecordDetailList() {
         return taskRecordDetailList;
+    }
+
+    public void setTaskRecordDetailList(List<TaskRecordDetailListBean> taskRecordDetailList) {
+        this.taskRecordDetailList = taskRecordDetailList;
     }
 
     public static class TaskRecordDetailListBean {
         /**
          * createBy : string
-         * createDate : 2018-01-30T01:44:36.092Z
+         * createDate : 2018-03-22T06:19:57.103Z
          * createName : string
          * equipmentAttributeId : string
-         * equipmentId : string
-         * equipmentName : string
+         * equipmentAttributeName : string
          * id : string
-         * recordTime : 2018-01-30T01:44:36.092Z
-         * taskId : string
+         * taskRecordId : string
          * updateBy : string
-         * updateDate : 2018-01-30T01:44:36.092Z
+         * updateDate : 2018-03-22T06:19:57.103Z
          * updateName : string
          * value : 0
          */
@@ -194,12 +234,28 @@ public class EndTaskBean {
             this.equipmentAttributeId = equipmentAttributeId;
         }
 
+        public String getEquipmentAttributeName() {
+            return equipmentAttributeName;
+        }
+
+        public void setEquipmentAttributeName(String equipmentAttributeName) {
+            this.equipmentAttributeName = equipmentAttributeName;
+        }
+
         public String getId() {
             return id;
         }
 
         public void setId(String id) {
             this.id = id;
+        }
+
+        public String getTaskRecordId() {
+            return taskRecordId;
+        }
+
+        public void setTaskRecordId(String taskRecordId) {
+            this.taskRecordId = taskRecordId;
         }
 
         public String getUpdateBy() {
@@ -232,22 +288,6 @@ public class EndTaskBean {
 
         public void setValue(double value) {
             this.value = value;
-        }
-
-        public String getEquipmentAttributeName() {
-            return equipmentAttributeName;
-        }
-
-        public void setEquipmentAttributeName(String equipmentAttributeName) {
-            this.equipmentAttributeName = equipmentAttributeName;
-        }
-
-        public String getTaskRecordId() {
-            return taskRecordId;
-        }
-
-        public void setTaskRecordId(String taskRecordId) {
-            this.taskRecordId = taskRecordId;
         }
     }
 }

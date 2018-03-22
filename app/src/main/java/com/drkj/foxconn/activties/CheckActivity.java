@@ -71,8 +71,10 @@ public class CheckActivity extends BaseActivity {
 
     @OnClick(R.id.image_save_check)
     void saveCheck() {
-        DbController.getInstance().updateEquipmentAttribute(mAdapter.getBean());
-        DbController.getInstance().updateEquipmentCheck(mAdapter.getBean());
+        if (!mAdapter.isAllNull()) {
+            DbController.getInstance().updateEquipmentAttribute(mAdapter.getBean());
+            DbController.getInstance().updateEquipmentCheck(mAdapter.getBean());
+        }
         finish();
     }
 }

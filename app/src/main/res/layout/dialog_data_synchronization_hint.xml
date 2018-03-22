@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/text_message"
+        android:id="@+id/dialog_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -27,7 +27,7 @@
         app:indicatorColor="@color/black" />
 
     <Button
-        android:id="@+id/button_confirm"
+        android:id="@+id/dialog_btn_confirm"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
@@ -39,20 +39,4 @@
         android:textColor="@color/white"
         android:textSize="18sp"
         android:visibility="gone" />
-    <!--<com.eyalbira.loadingdots.LoadingDots-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="center_horizontal"-->
-    <!--app:LoadingDots_auto_play="true"-->
-
-    <!--app:LoadingDots_dots_color="@color/black"-->
-    <!--app:LoadingDots_dots_count="6"-->
-    <!--app:LoadingDots_dots_size="10dp"-->
-    <!--app:LoadingDots_dots_space="5dp"-->
-
-    <!--app:LoadingDots_loop_duration="800"-->
-    <!--app:LoadingDots_loop_start_delay="100"-->
-
-    <!--app:LoadingDots_jump_duration="200"-->
-    <!--app:LoadingDots_jump_height="4dp"/>-->
 </LinearLayout>

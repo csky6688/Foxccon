@@ -11,6 +11,7 @@ import com.drkj.foxconn.bean.PictureUrlBean;
 import com.drkj.foxconn.bean.RegionResultBean;
 import com.drkj.foxconn.bean.StartTaskBean;
 import com.drkj.foxconn.bean.StartTaskResultBean;
+import com.drkj.foxconn.bean.UserBean;
 
 import java.io.File;
 
@@ -46,6 +47,10 @@ public interface ServerApi {
     @FormUrlEncoded
     @POST(ConstantUrl.API_TOKEN)
     Observable<Response<ResponseBody>> getToken(@Field("username") String username, @Field("password") String password);
+
+    //获取巡检负责人
+    @GET(ConstantUrl.API_TYPE_USER)
+    Observable<UserBean> getTypeUser(@Header("X-AUTH-TOKEN") String token);
 
     //创建巡检任务
     @Headers("Content-Type: application/json")

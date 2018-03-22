@@ -12,6 +12,8 @@ import com.drkj.foxconn.bean.EquipmentFaultBean;
 import com.drkj.foxconn.bean.EquipmentResultBean;
 import com.drkj.foxconn.bean.FeedbackBean;
 import com.drkj.foxconn.bean.RegionResultBean;
+import com.drkj.foxconn.util.DateUtil;
+import com.drkj.foxconn.util.SpUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +36,16 @@ public class DbController {
         return instance;
     }
 
+    /**
+     * 保存区域信息
+     *
+     * @param bean
+     */
     public void saveRegionInfo(RegionResultBean bean) {
         Log.e("tag", "saveRegionInfo");
 
         if (bean == null || bean.getData() == null)
             return;
-
 
         SQLiteDatabase db = sqlHelper.getWritableDatabase();
         for (RegionResultBean.DataBean dataBean : bean.getData()) {
@@ -64,6 +70,11 @@ public class DbController {
         }
     }
 
+    /**
+     * 保存设备信息
+     *
+     * @param bean
+     */
     public void saveEquipment(EquipmentResultBean bean) {
         if (bean == null || bean.getData() == null)
             return;
@@ -108,6 +119,64 @@ public class DbController {
         }
     }
 
+    /**
+     * 保存设备信息
+     *
+     * @param bean
+     */
+    public void saveEquipment(EquipmentResultBean bean, String type) {
+        if (bean == null || bean.getData() == null)
+            return;
+        SQLiteDatabase db = sqlHelper.getWritableDatabase();
+        for (EquipmentResultBean.DataBean dataBean : bean.getData()) {
+            if (!type.equals(dataBean.getType())) {
+                continue;
+            }
+            ContentValues values = new ContentValues();
+            values.put("buildingId", dataBean.getBuildingId());
+            values.put("code", dataBean.getCode());
+            values.put("createBy", dataBean.getCreateBy());
+            values.put("createDate", dataBean.getCreateDate());
+            values.put("createName", dataBean.getCreateName());
+            values.put("id", dataBean.getId());
+            values.put("name", dataBean.getName());
+            values.put("nfcCode", dataBean.getNfcCode());
+            values.put("roomId", dataBean.getRoomId());
+            values.put("storeyId", dataBean.getStoreyId());
+            values.put("type", dataBean.getType());
+            values.put("isCheck", "false");//默认未巡检
+            if (queryEquipmentById(dataBean.getId()) > 0) {
+                db.update(DbConstant.TABLE_EQUIPMENT, values, "id=?", new String[]{dataBean.getId()});
+                db.delete(DbConstant.TABLE_EQUIPMENTATTRIBUTE, "equipmentId=?", new String[]{dataBean.getId()});
+            } else {
+                db.insert(DbConstant.TABLE_EQUIPMENT, null, values);
+            }
+            for (EquipmentResultBean.DataBean.EquipmentAttributeListBean listBean : dataBean.getEquipmentAttributeList()) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("createBy", listBean.getCreateBy());
+                contentValues.put("createDate", listBean.getCreateDate());
+                contentValues.put("createName", listBean.getCreateName());
+                contentValues.put("equipmentId", listBean.getEquipmentId());
+                contentValues.put("id", listBean.getId());
+                contentValues.put("max", listBean.getMax());
+                contentValues.put("min", listBean.getMin());
+                contentValues.put("name", listBean.getName());
+                contentValues.put("rating", listBean.getRating());
+                contentValues.put("type", listBean.getType());
+                contentValues.put("updateBy", listBean.getUpdateBy());
+                contentValues.put("updateName", listBean.getUpdateName());
+//                contentValues.put("value", listBean.getValue());
+                db.insert(DbConstant.TABLE_EQUIPMENTATTRIBUTE, null, contentValues);
+            }
+        }
+    }
+
+    /**
+     * 查询当前刷卡扫码的设备
+     *
+     * @param code
+     * @return
+     */
     public EquipmentResultBean.DataBean queryEquipmentByNfcCode(String code) {
         EquipmentResultBean.DataBean bean = new EquipmentResultBean.DataBean();
         SQLiteDatabase db = sqlHelper.getReadableDatabase();
@@ -151,6 +220,161 @@ public class DbController {
         return bean;
     }
 
+    /**
+     * 查询当前楼栋的设备
+     *
+     * @param buildingId
+     * @return
+     */
+    public List<EquipmentResultBean.DataBean> queryAllEquipmentByBuilding(String buildingId) {
+        List<EquipmentResultBean.DataBean> dataBeans = new ArrayList<>();
+        SQLiteDatabase db = sqlHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbConstant.TABLE_EQUIPMENT, null, "buildingId=?", new String[]{buildingId}, null, null, null);
+        while (cursor.moveToNext()) {
+            EquipmentResultBean.DataBean bean = new EquipmentResultBean.DataBean();
+            bean.setBuildingId(cursor.getString(cursor.getColumnIndex("buildingId")));
+            bean.setCode(cursor.getString(cursor.getColumnIndex("code")));
+            bean.setCreateBy(cursor.getString(cursor.getColumnIndex("createBy")));
+            bean.setCreateDate(cursor.getString(cursor.getColumnIndex("createDate")));
+            bean.setCreateName(cursor.getString(cursor.getColumnIndex("createName")));
+            bean.setId(cursor.getString(cursor.getColumnIndex("id")));
+            bean.setName(cursor.getString(cursor.getColumnIndex("name")));
+            bean.setNfcCode(cursor.getString(cursor.getColumnIndex("nfcCode")));
+            bean.setRoomId(cursor.getString(cursor.getColumnIndex("roomId")));
+            bean.setStoreyId(cursor.getString(cursor.getColumnIndex("storeyId")));
+            bean.setType(cursor.getString(cursor.getColumnIndex("type")));
+            bean.setCheck(cursor.getString(cursor.getColumnIndex("isCheck")));
+            Cursor cursor1 = db.query(DbConstant.TABLE_EQUIPMENTATTRIBUTE, null, "equipmentId=?", new String[]{bean.getId()}, null, null, null);
+            List<EquipmentResultBean.DataBean.EquipmentAttributeListBean> list = new ArrayList<>();
+            while (cursor1.moveToNext()) {
+                EquipmentResultBean.DataBean.EquipmentAttributeListBean bean1 = new EquipmentResultBean.DataBean.EquipmentAttributeListBean();
+                bean1.setCreateBy(cursor1.getString(cursor1.getColumnIndex("createBy")));
+                bean1.setCreateDate(cursor1.getString(cursor1.getColumnIndex("createDate")));
+                bean1.setCreateName(cursor1.getString(cursor1.getColumnIndex("createName")));
+                bean1.setEquipmentId(cursor1.getString(cursor1.getColumnIndex("equipmentId")));
+                bean1.setId(cursor1.getString(cursor1.getColumnIndex("id")));
+                bean1.setMax(cursor1.getDouble(cursor1.getColumnIndex("max")));
+                bean1.setMin(cursor1.getDouble(cursor1.getColumnIndex("min")));
+                bean1.setName(cursor1.getString(cursor1.getColumnIndex("name")));
+                bean1.setRating(cursor1.getDouble(cursor1.getColumnIndex("rating")));
+                bean1.setType(cursor1.getString(cursor1.getColumnIndex("type")));
+                bean1.setUpdateBy(cursor1.getString(cursor1.getColumnIndex("updateBy")));
+                bean1.setUpdateName(cursor1.getString(cursor1.getColumnIndex("updateName")));
+                list.add(bean1);
+            }
+            bean.setEquipmentAttributeList(list);
+            cursor1.close();
+            dataBeans.add(bean);
+        }
+        cursor.close();
+        return dataBeans;
+    }
+
+    /**
+     * 查询当前楼层的设备
+     *
+     * @param storeyId
+     * @return
+     */
+    public List<EquipmentResultBean.DataBean> queryAllEquipmentByStorey(String storeyId) {
+        List<EquipmentResultBean.DataBean> dataBeans = new ArrayList<>();
+        SQLiteDatabase db = sqlHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbConstant.TABLE_EQUIPMENT, null, "storeyId=?", new String[]{storeyId}, null, null, null);
+        while (cursor.moveToNext()) {
+            EquipmentResultBean.DataBean bean = new EquipmentResultBean.DataBean();
+            bean.setBuildingId(cursor.getString(cursor.getColumnIndex("buildingId")));
+            bean.setCode(cursor.getString(cursor.getColumnIndex("code")));
+            bean.setCreateBy(cursor.getString(cursor.getColumnIndex("createBy")));
+            bean.setCreateDate(cursor.getString(cursor.getColumnIndex("createDate")));
+            bean.setCreateName(cursor.getString(cursor.getColumnIndex("createName")));
+            bean.setId(cursor.getString(cursor.getColumnIndex("id")));
+            bean.setName(cursor.getString(cursor.getColumnIndex("name")));
+            bean.setNfcCode(cursor.getString(cursor.getColumnIndex("nfcCode")));
+            bean.setRoomId(cursor.getString(cursor.getColumnIndex("roomId")));
+            bean.setStoreyId(cursor.getString(cursor.getColumnIndex("storeyId")));
+            bean.setType(cursor.getString(cursor.getColumnIndex("type")));
+            bean.setCheck(cursor.getString(cursor.getColumnIndex("isCheck")));
+            Cursor cursor1 = db.query(DbConstant.TABLE_EQUIPMENTATTRIBUTE, null, "equipmentId=?", new String[]{bean.getId()}, null, null, null);
+            List<EquipmentResultBean.DataBean.EquipmentAttributeListBean> list = new ArrayList<>();
+            while (cursor1.moveToNext()) {
+                EquipmentResultBean.DataBean.EquipmentAttributeListBean bean1 = new EquipmentResultBean.DataBean.EquipmentAttributeListBean();
+                bean1.setCreateBy(cursor1.getString(cursor1.getColumnIndex("createBy")));
+                bean1.setCreateDate(cursor1.getString(cursor1.getColumnIndex("createDate")));
+                bean1.setCreateName(cursor1.getString(cursor1.getColumnIndex("createName")));
+                bean1.setEquipmentId(cursor1.getString(cursor1.getColumnIndex("equipmentId")));
+                bean1.setId(cursor1.getString(cursor1.getColumnIndex("id")));
+                bean1.setMax(cursor1.getDouble(cursor1.getColumnIndex("max")));
+                bean1.setMin(cursor1.getDouble(cursor1.getColumnIndex("min")));
+                bean1.setName(cursor1.getString(cursor1.getColumnIndex("name")));
+                bean1.setRating(cursor1.getDouble(cursor1.getColumnIndex("rating")));
+                bean1.setType(cursor1.getString(cursor1.getColumnIndex("type")));
+                bean1.setUpdateBy(cursor1.getString(cursor1.getColumnIndex("updateBy")));
+                bean1.setUpdateName(cursor1.getString(cursor1.getColumnIndex("updateName")));
+                list.add(bean1);
+            }
+            bean.setEquipmentAttributeList(list);
+            cursor1.close();
+            dataBeans.add(bean);
+        }
+        cursor.close();
+        return dataBeans;
+    }
+
+    /**
+     * 查找房间中的设备
+     *
+     * @param roomId
+     * @return
+     */
+    public List<EquipmentResultBean.DataBean> queryAllEquipmentByRoom(String roomId) {
+        List<EquipmentResultBean.DataBean> dataBeans = new ArrayList<>();
+        SQLiteDatabase db = sqlHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbConstant.TABLE_EQUIPMENT, null, "roomId=?", new String[]{roomId}, null, null, null);
+        while (cursor.moveToNext()) {
+            EquipmentResultBean.DataBean bean = new EquipmentResultBean.DataBean();
+            bean.setBuildingId(cursor.getString(cursor.getColumnIndex("buildingId")));
+            bean.setCode(cursor.getString(cursor.getColumnIndex("code")));
+            bean.setCreateBy(cursor.getString(cursor.getColumnIndex("createBy")));
+//            bean.setCreateDate(DateUtil.INSTANCE.getTransDate(cursor.getString(cursor.getColumnIndex("createDate"))));
+            bean.setCreateName(cursor.getString(cursor.getColumnIndex("createName")));
+            bean.setId(cursor.getString(cursor.getColumnIndex("id")));
+            bean.setName(cursor.getString(cursor.getColumnIndex("name")));
+            bean.setNfcCode(cursor.getString(cursor.getColumnIndex("nfcCode")));
+            bean.setRoomId(cursor.getString(cursor.getColumnIndex("roomId")));
+            bean.setStoreyId(cursor.getString(cursor.getColumnIndex("storeyId")));
+            bean.setType(cursor.getString(cursor.getColumnIndex("type")));
+            bean.setCheck(cursor.getString(cursor.getColumnIndex("isCheck")));
+            Cursor cursor1 = db.query(DbConstant.TABLE_EQUIPMENTATTRIBUTE, null, "equipmentId=?", new String[]{bean.getId()}, null, null, null);
+            List<EquipmentResultBean.DataBean.EquipmentAttributeListBean> list = new ArrayList<>();
+            while (cursor1.moveToNext()) {
+                EquipmentResultBean.DataBean.EquipmentAttributeListBean bean1 = new EquipmentResultBean.DataBean.EquipmentAttributeListBean();
+                bean1.setCreateBy(cursor1.getString(cursor1.getColumnIndex("createBy")));
+//                bean1.setCreateDate(DateUtil.INSTANCE.getTransDate(cursor1.getString(cursor1.getColumnIndex("createDate"))));
+                bean1.setCreateName(cursor1.getString(cursor1.getColumnIndex("createName")));
+                bean1.setEquipmentId(cursor1.getString(cursor1.getColumnIndex("equipmentId")));
+                bean1.setId(cursor1.getString(cursor1.getColumnIndex("id")));
+                bean1.setMax(cursor1.getDouble(cursor1.getColumnIndex("max")));
+                bean1.setMin(cursor1.getDouble(cursor1.getColumnIndex("min")));
+                bean1.setName(cursor1.getString(cursor1.getColumnIndex("name")));
+                bean1.setRating(cursor1.getDouble(cursor1.getColumnIndex("rating")));
+                bean1.setType(cursor1.getString(cursor1.getColumnIndex("type")));
+                bean1.setUpdateBy(cursor1.getString(cursor1.getColumnIndex("updateBy")));
+//                bean1.setUpdateName(DateUtil.INSTANCE.getTransDate(cursor1.getString(cursor1.getColumnIndex("updateName"))));
+                list.add(bean1);
+            }
+            bean.setEquipmentAttributeList(list);
+            cursor1.close();
+            dataBeans.add(bean);
+        }
+        cursor.close();
+        return dataBeans;
+    }
+
+    /**
+     * 查询所有数据
+     *
+     * @return
+     */
     public List<EquipmentResultBean.DataBean> queryAllEquipment() {
         List<EquipmentResultBean.DataBean> dataBeans = new ArrayList<>();
         SQLiteDatabase db = sqlHelper.getReadableDatabase();
@@ -193,6 +417,139 @@ public class DbController {
         }
         cursor.close();
         return dataBeans;
+    }
+
+    /**
+     * 查询所有数据（带有属性value）
+     *
+     * @return
+     */
+    public List<EquipmentResultBean.DataBean> queryAllEquipmentWithValue() {
+        List<EquipmentResultBean.DataBean> dataBeans = new ArrayList<>();
+        SQLiteDatabase db = sqlHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbConstant.TABLE_EQUIPMENT, null, null, null, null, null, null);
+        while (cursor.moveToNext()) {
+            EquipmentResultBean.DataBean bean = new EquipmentResultBean.DataBean();
+            bean.setBuildingId(cursor.getString(cursor.getColumnIndex("buildingId")));
+            bean.setCode(cursor.getString(cursor.getColumnIndex("code")));
+            bean.setCreateBy(cursor.getString(cursor.getColumnIndex("createBy")));
+            bean.setCreateDate(cursor.getString(cursor.getColumnIndex("createDate")));
+            bean.setCreateName(cursor.getString(cursor.getColumnIndex("createName")));
+            bean.setId(cursor.getString(cursor.getColumnIndex("id")));
+            bean.setName(cursor.getString(cursor.getColumnIndex("name")));
+            bean.setNfcCode(cursor.getString(cursor.getColumnIndex("nfcCode")));
+            bean.setRoomId(cursor.getString(cursor.getColumnIndex("roomId")));
+            bean.setStoreyId(cursor.getString(cursor.getColumnIndex("storeyId")));
+            bean.setType(cursor.getString(cursor.getColumnIndex("type")));
+            bean.setCheck(cursor.getString(cursor.getColumnIndex("isCheck")));
+            Cursor cursor1 = db.query(DbConstant.TABLE_EQUIPMENTATTRIBUTE, null, "equipmentId=?", new String[]{bean.getId()}, null, null, null);
+            List<EquipmentResultBean.DataBean.EquipmentAttributeListBean> list = new ArrayList<>();
+            while (cursor1.moveToNext()) {
+                EquipmentResultBean.DataBean.EquipmentAttributeListBean bean1 = new EquipmentResultBean.DataBean.EquipmentAttributeListBean();
+                bean1.setCreateBy(cursor1.getString(cursor1.getColumnIndex("createBy")));
+                bean1.setCreateDate(cursor1.getString(cursor1.getColumnIndex("createDate")));
+                bean1.setCreateName(cursor1.getString(cursor1.getColumnIndex("createName")));
+                bean1.setEquipmentId(cursor1.getString(cursor1.getColumnIndex("equipmentId")));
+                bean1.setId(cursor1.getString(cursor1.getColumnIndex("id")));
+                bean1.setMax(cursor1.getDouble(cursor1.getColumnIndex("max")));
+                bean1.setMin(cursor1.getDouble(cursor1.getColumnIndex("min")));
+                bean1.setValue(cursor1.getDouble(cursor1.getColumnIndex("value")));
+                bean1.setName(cursor1.getString(cursor1.getColumnIndex("name")));
+                bean1.setRating(cursor1.getDouble(cursor1.getColumnIndex("rating")));
+                bean1.setType(cursor1.getString(cursor1.getColumnIndex("type")));
+                bean1.setUpdateBy(cursor1.getString(cursor1.getColumnIndex("updateBy")));
+                bean1.setUpdateName(cursor1.getString(cursor1.getColumnIndex("updateName")));
+                bean1.setValue(cursor1.getDouble(cursor1.getColumnIndex("value")));
+                list.add(bean1);
+            }
+            bean.setEquipmentAttributeList(list);
+            cursor1.close();
+            dataBeans.add(bean);
+        }
+        cursor.close();
+        return dataBeans;
+    }
+
+    /**
+     * 查询所有结束巡检时的设备数据
+     *
+     * @return
+     */
+    public List<EndTaskBean> queryAllEndTask(String taskId) {
+        List<EquipmentResultBean.DataBean> equipmentList = queryAllEquipment();
+        List<EndTaskBean> endBeanList = new ArrayList<>();
+
+        for (EquipmentResultBean.DataBean bean : equipmentList) {
+            EndTaskBean tempEndBean = new EndTaskBean();
+            tempEndBean.setTaskId(taskId);
+            tempEndBean.setEquipmentId(bean.getId());
+            List<EndTaskBean.TaskRecordDetailListBean> endDetailBeanList = new ArrayList<>();
+            for (EquipmentResultBean.DataBean.EquipmentAttributeListBean attrBean : bean.getEquipmentAttributeList()) {
+                EndTaskBean.TaskRecordDetailListBean tempEndListBean = new EndTaskBean.TaskRecordDetailListBean();
+                tempEndListBean.setCreateBy(attrBean.getCreateBy().trim());
+                tempEndListBean.setCreateName(attrBean.getCreateName());
+                tempEndListBean.setEquipmentAttributeId(attrBean.getId());
+                tempEndListBean.setEquipmentAttributeName(attrBean.getName());
+                tempEndListBean.setUpdateBy(attrBean.getUpdateBy());
+                tempEndListBean.setUpdateName(attrBean.getUpdateName());
+                tempEndListBean.setValue(attrBean.getValue());
+                endDetailBeanList.add(tempEndListBean);
+            }
+            tempEndBean.setTaskRecordDetailList(endDetailBeanList);
+            endBeanList.add(tempEndBean);
+        }
+
+//        EndTaskBean endTaskBean = new EndTaskBean();
+//        List<EndTaskBean.TaskRecordDetailListBean> list = new ArrayList<>();
+//        SQLiteDatabase db = sqlHelper.getReadableDatabase();
+//        Cursor cursor = db.query(DbConstant.TABLE_EQUIPMENTATTRIBUTE, null, null, null, null, null, null);
+//        while (cursor.moveToNext()) {
+//            EndTaskBean.TaskRecordDetailListBean recordListBean = new EndTaskBean.TaskRecordDetailListBean();
+//            recordListBean.setCreateBy(cursor.getString(cursor.getColumnIndex("createBy")));
+//            recordListBean.setCreateName(cursor.getString(cursor.getColumnIndex("createName")));
+//            recordListBean.setEquipmentAttributeId(cursor.getString(cursor.getColumnIndex("equipmentId")));
+//            recordListBean.setEquipmentAttributeName(cursor.getString(cursor.getColumnIndex("name")));
+//            recordListBean.setUpdateBy(cursor.getString(cursor.getColumnIndex("updateBy")));
+//            recordListBean.setUpdateName(cursor.getString(cursor.getColumnIndex("updateName")));
+//            recordListBean.setValue(cursor.getDouble(cursor.getColumnIndex("value")));
+//            list.add(recordListBean);
+//        }
+//        endTaskBean.setTaskRecordDetailList(list);
+//        cursor.close();
+        return endBeanList;
+    }
+
+    public String queryBuildingName(String buildingId) {
+        SQLiteDatabase db = sqlHelper.getReadableDatabase();
+        String buildingName = "";
+        Cursor cursor = db.query(DbConstant.TABLE_REGION, new String[]{"name"}, "id=?", new String[]{buildingId}, null, null, null);
+        if (cursor.moveToFirst()) {
+            buildingName = cursor.getString(cursor.getColumnIndex("name"));
+        }
+        cursor.close();
+        return buildingName;
+    }
+
+    public String queryStoreyName(String storeyId) {
+        SQLiteDatabase db = sqlHelper.getReadableDatabase();
+        String storeyName = "";
+        Cursor cursor = db.query(DbConstant.TABLE_REGION, new String[]{"name"}, "id=?", new String[]{storeyId}, null, null, null);
+        if (cursor.moveToFirst()) {
+            storeyName = cursor.getString(cursor.getColumnIndex("name"));
+        }
+        cursor.close();
+        return storeyName;
+    }
+
+    public String queryRoomName(String roomId) {
+        SQLiteDatabase db = sqlHelper.getReadableDatabase();
+        String roomName = "";
+        Cursor cursor = db.query(DbConstant.TABLE_REGION, new String[]{"name"}, "id=?", new String[]{roomId}, null, null, null);
+        if (cursor.moveToFirst()) {
+            roomName = cursor.getString(cursor.getColumnIndex("name"));
+        }
+        cursor.close();
+        return roomName;
     }
 
     public void updateEquipmentAttribute(EquipmentResultBean.DataBean.EquipmentAttributeListBean attributeListBean) {
@@ -280,25 +637,6 @@ public class DbController {
         return dataBean;
     }
 
-    public String queryWholeLocation(String nfcCode) {
-        StringBuilder builder = new StringBuilder();
-        RegionResultBean.DataBean bean = queryRegionByNfcCode(nfcCode);
-        if (!TextUtils.isEmpty(bean.getName())) {
-            builder.append(bean.getName());
-        }
-
-//        while (true) {
-//
-//            if () {
-//
-//            } else {
-//                break;
-//            }
-//        }
-
-        return builder.toString();
-    }
-
     private int queryEquipmentById(String id) {
         SQLiteDatabase db = sqlHelper.getReadableDatabase();
         Cursor cursor = db.query(DbConstant.TABLE_EQUIPMENT, null, "id=?", new String[]{id}, null, null, null);
@@ -307,6 +645,7 @@ public class DbController {
         return count;
     }
 
+    //反馈查询
     public EndTaskBean queryAllAttribute() {
         EndTaskBean endTaskBean = new EndTaskBean();
         List<EndTaskBean.TaskRecordDetailListBean> list = new ArrayList<>();
@@ -479,6 +818,7 @@ public class DbController {
         db.delete(DbConstant.TABLE_FEEDBACK_PICTURE_LIST, "id=?", new String[]{id});
     }
 
+    //故障查询
     public void saveEquipmentFault(EquipmentFaultBean bean) {
         SQLiteDatabase db = sqlHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -623,5 +963,28 @@ public class DbController {
     public void deleteEquipmentFaultPictureById(String id) {
         SQLiteDatabase db = sqlHelper.getWritableDatabase();
         db.delete(DbConstant.TABLE_EQUIPMENT_FAULT_PICTURE_LIST, "id=?", new String[]{id});
+    }
+
+    public void deleteAllData() {
+        SQLiteDatabase db = sqlHelper.getWritableDatabase();
+        db.delete(DbConstant.TABLE_EQUIPMENT, null, null);
+        db.delete(DbConstant.TABLE_EQUIPMENTATTRIBUTE, null, null);
+        db.delete(DbConstant.TABLE_REGION, null, null);
+    }
+
+    /**
+     * 查询所有未巡检的设备
+     */
+    public int queryNotCheckCount() {
+        int count = 0;
+        SQLiteDatabase db = sqlHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbConstant.TABLE_EQUIPMENT, null, null, null, null, null, null);
+        while (cursor.moveToNext()) {
+            if (cursor.getString(cursor.getColumnIndex("isCheck")).equals("false")) {
+                count++;
+            }
+        }
+        cursor.close();
+        return count;
     }
 }

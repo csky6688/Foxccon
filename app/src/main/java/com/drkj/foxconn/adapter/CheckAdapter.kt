@@ -13,10 +13,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.drkj.foxconn.R
 import com.drkj.foxconn.bean.EquipmentResultBean
+import com.drkj.foxconn.util.DateUtil
 
 /**
  * 离线巡检列表适配器
- * Created by VeronicaRen on 2018/3/2.
+ * Created by VeronicaRen on 2018/3/2. in Kotlin
  */
 class CheckAdapter(context: Context, bean: EquipmentResultBean.DataBean) : BaseAdapter() {
 
@@ -105,6 +106,13 @@ class CheckAdapter(context: Context, bean: EquipmentResultBean.DataBean) : BaseA
         if (!TextUtils.isEmpty(mBean.isCheck) && mBean.isCheck == "true") {
             holder.attrValueText.text = mBean.equipmentAttributeList[position].value.toString()
         }
+
+        if (!TextUtils.isEmpty(mBean.equipmentAttributeList[position].createDate)) {
+            mBean.equipmentAttributeList[position].createDate = DateUtil.getDate()
+        } else {
+            mBean.equipmentAttributeList[position].updateBy = DateUtil.getDate()
+        }
+
         return itemView
     }
 
@@ -113,6 +121,10 @@ class CheckAdapter(context: Context, bean: EquipmentResultBean.DataBean) : BaseA
     override fun getItemId(position: Int): Long = position.toLong()
 
     override fun getCount(): Int = mBean.equipmentAttributeList.size
+
+    fun isAllNull(): Boolean {
+        return !mBean.equipmentAttributeList.any { it.value > 0 }
+    }
 
     inner class ViewHolder(itemView: View) {
         var attrNameText: TextView = itemView.findViewById(R.id.text_equipment_attr_name)

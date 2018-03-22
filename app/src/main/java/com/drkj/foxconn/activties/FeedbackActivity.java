@@ -23,7 +23,6 @@ import com.drkj.foxconn.BaseActivity;
 import com.drkj.foxconn.R;
 import com.drkj.foxconn.adapter.ImageCaptureAdapter;
 import com.drkj.foxconn.bean.FeedbackBean;
-import com.drkj.foxconn.bean.RegionResultBean;
 import com.drkj.foxconn.db.DbController;
 import com.drkj.foxconn.mvp.presenter.FeedbackPresenter;
 import com.drkj.foxconn.mvp.view.IFeedbackView;
@@ -71,6 +70,8 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
     private DecoderManager decoderManager;
 
     private boolean isResume = false;
+
+    private String mCreateDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +177,7 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
             DbController.getInstance().saveFeedback(feedbackBean);
             finish();
         } else {
+            feedbackBean.setCreateDate(mCreateDate);
             feedbackBean.setUpdateDate(DateUtil.INSTANCE.getDate());
             feedbackBean.setId(tempId);//必须重新更换id
             feedbackBean.setContent(content.getText().toString());
@@ -214,6 +216,7 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
         for (FeedbackBean.LocalFeedbackPictureListBean picBean : bean.getLocalFeedbackPictureList()) {
             mAdapter.addPic(new File(picBean.getPath()));
         }
+        mCreateDate = bean.getCreateDate();
         feedbackBean = bean;
         content.setText(bean.getContent());
         tvLocation.setText(bean.getRegionName());

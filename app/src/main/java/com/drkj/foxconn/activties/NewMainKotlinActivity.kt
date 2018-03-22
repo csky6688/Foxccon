@@ -3,6 +3,7 @@ package com.drkj.foxconn.activties
 import android.content.Intent
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
+import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -190,6 +191,7 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
                 }
                 true
             }
+            KeyEvent.KEYCODE_BACK -> true
             else -> super.onKeyDown(keyCode, event)
         }
     }
@@ -212,9 +214,14 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
     }
 
     override fun onDecoderResultChanage(result: String?, time: String?) {
-        runOnUiThread { Toast.makeText(this, "扫描结果:\n$result", Toast.LENGTH_SHORT).show() }
+        runOnUiThread {
+            if (!TextUtils.isEmpty(result)) {
+                onNfcListener?.onNfcReceived(result!!)
+            }
+//            Toast.makeText(this, "扫描结果:\n$result", Toast.LENGTH_SHORT).show()
+        }
         Log.e("scan", result)
     }
 
-    fun getFragmentList(): List<Fragment> = fragmentList
+//    fun getFragmentList(): List<Fragment> = fragmentList
 }

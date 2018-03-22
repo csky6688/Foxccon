@@ -11,7 +11,7 @@ import kotterknife.bindView
 
 /**
  * 新登录界面
- * Created by VeronicaRen on 2018/2/23.
+ * Created by VeronicaRen on 2018/2/23. in Kotlin
  */
 class NewLoginKotlinActivity : BaseKotlinActivity(), ILoginView {
 
@@ -34,9 +34,9 @@ class NewLoginKotlinActivity : BaseKotlinActivity(), ILoginView {
     override fun initView() {
         presenter.bindView(this)
         dialog = Dialog(this)
-        userName.setText(SpUtil.getString(this, "username"))
-        password.setText(SpUtil.getString(this, "password"))
-        remember.isChecked = SpUtil.getBlooean(this, "remember")
+        userName.setText(SpUtil.getString(this, SpUtil.USERNAME))
+        password.setText(SpUtil.getString(this, SpUtil.PASSWORD))
+        remember.isChecked = SpUtil.getBoolean(this, SpUtil.REMEMBER)
 
         loginButton.setOnClickListener {
             it.isEnabled = false
@@ -57,32 +57,40 @@ class NewLoginKotlinActivity : BaseKotlinActivity(), ILoginView {
     override fun onLoginFinish(token: String) {
         loginButton.isEnabled = true
         if (remember.isChecked) {
-            SpUtil.putString(this, "username", userName.text.toString())
-            SpUtil.putString(this, "password", password.text.toString())
+            SpUtil.putString(this, SpUtil.USERNAME, userName.text.toString())
+            SpUtil.putString(this, SpUtil.PASSWORD, password.text.toString())
         } else {
-            SpUtil.putString(this, "username", "")
-            SpUtil.putString(this, "password", "")
+            SpUtil.putString(this, SpUtil.USERNAME, "")
+            SpUtil.putString(this, SpUtil.PASSWORD, "")
         }
-        SpUtil.putString(this, "token", token)
-        SpUtil.putBlooean(this, "remember", remember.isChecked)
+        SpUtil.putString(this, SpUtil.TOKEN, token)
+        SpUtil.putBoolean(this, SpUtil.REMEMBER, remember.isChecked)
         dialog?.dismiss()
-//        startActivity(Intent(this, MainActivity::class.java))
-        startActivity(Intent(this, NewMainKotlinActivity::class.java))
-//        finish()
+
+        presenter.getUserInfo(this)
     }
 
     override fun onLoginFailed() {
         loginButton.isEnabled = true
         if (remember.isChecked) {
-            SpUtil.putString(this, "username", userName.text.toString())
-            SpUtil.putString(this, "password", password.text.toString())
+            SpUtil.putString(this, SpUtil.USERNAME, userName.text.toString())
+            SpUtil.putString(this, SpUtil.PASSWORD, password.text.toString())
         } else {
-            SpUtil.putString(this, "username", "")
-            SpUtil.putString(this, "password", "")
+            SpUtil.putString(this, SpUtil.USERNAME, "")
+            SpUtil.putString(this, SpUtil.PASSWORD, "")
         }
-        SpUtil.putBlooean(this, "remember", remember.isChecked)
+        SpUtil.putBoolean(this, SpUtil.REMEMBER, remember.isChecked)
         dialog?.dismiss()
-        Toast.makeText(this, "服务器连接失败，请重试或检查网络连接", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "登录失败，请重试或检查网络连接", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onUserInfoFinish() {
+        startActivity(Intent(this, NewMainKotlinActivity::class.java))
+        finish()
+    }
+
+    override fun onUserInfoFailed() {
+        Toast.makeText(this, "获取用户信息失败，请检查用户数据是否录入正确", Toast.LENGTH_SHORT).show()
     }
 
     override fun onReceiveMsg(msg: String) {

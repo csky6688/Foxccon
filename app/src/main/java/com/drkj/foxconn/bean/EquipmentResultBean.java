@@ -1,6 +1,5 @@
 package com.drkj.foxconn.bean;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -8,7 +7,7 @@ import java.util.List;
  * 查询所有设备返回的数据对象
  */
 
-public class EquipmentResultBean implements Serializable {
+public class EquipmentResultBean{
 
     /**
      * data : [{"buildingId":"40288186612cf36801612cf5652a0001","code":"a","createBy":"admin","createDate":"2018-01-28 00:14:10","createName":"管理员","equipmentAttributeList":[{"createBy":"admin","createDate":"2018-01-28 00:14:10","createName":"管理员","equipmentId":"402880f46138644a01613865c86f0001","id":"402880f46138644a01613865c8700002","max":3,"min":2,"name":"a","rating":1,"type":"0","updateBy":"","updateName":""},{"createBy":"admin","createDate":"2018-01-28 00:14:10","createName":"管理员","equipmentId":"402880f46138644a01613865c86f0001","id":"402880f46138644a01613865c8700003","max":6,"min":5,"name":"b","rating":4,"type":"1"}],"id":"402880f46138644a01613865c86f0001","name":"a","nfcCode":"a","roomId":"","storeyId":"40288186612cf36801612cf652370003","type":"0"},{"buildingId":"40288186612cf36801612cf5652a0001","code":"h","createBy":"admin","createDate":"2018-01-28 00:14:53","createName":"管理员","equipmentAttributeList":[{"createBy":"admin","createDate":"2018-01-28 00:14:53","createName":"管理员","equipmentId":"402880f46138644a016138666fef0005","id":"402880f46138644a016138666fef0006","max":9,"min":8,"name":"c","rating":7,"type":"0","updateBy":"","updateName":""},{"createBy":"admin","createDate":"2018-01-28 00:14:53","createName":"管理员","equipmentId":"402880f46138644a016138666fef0005","id":"402880f46138644a016138666fef0007","max":12,"min":11,"name":"d","rating":10,"type":"0"}],"id":"402880f46138644a016138666fef0005","name":"h","nfcCode":"h","roomId":"","storeyId":"40288186612cf36801612cf652370003","type":"0"}]

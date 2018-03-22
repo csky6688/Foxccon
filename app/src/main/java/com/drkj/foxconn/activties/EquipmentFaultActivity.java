@@ -72,6 +72,8 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
 
     private DecoderManager decoderManager;
 
+    private String mCreateDate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,6 +160,7 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
             DbController.getInstance().saveEquipmentFault(equipmentFaultBean);
             finish();
         } else {
+            equipmentFaultBean.setCreateDate(mCreateDate);
             equipmentFaultBean.setUpdateDate(DateUtil.INSTANCE.getDate());
             equipmentFaultBean.setContent(content.getText().toString());
             equipmentFaultBean.setType(type);
@@ -186,7 +189,7 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
             mAdapter.addPic(new File(picBean.getPath()));
         }
         equipmentFaultBean = bean;
-
+        mCreateDate = bean.getCreateDate();
         content.setText(bean.getContent());
         tvCode.setText(bean.getEquipmentCode());
         tvName.setText(bean.getEquipmentName());
@@ -267,6 +270,7 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
     public void onNfcReceive(@NotNull final EquipmentResultBean.DataBean bean, @NotNull final String location, @NotNull final String nfcCode) {
         if (bean.getName() != null) {
 
+            mCreateDate = bean.getCreateDate();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

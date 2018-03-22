@@ -1,15 +1,18 @@
 package com.drkj.foxconn.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.drkj.foxconn.activties.NewMainKotlinActivity;
@@ -18,6 +21,7 @@ import com.drkj.foxconn.R;
 import com.drkj.foxconn.activties.CheckActivity;
 import com.drkj.foxconn.bean.EquipmentResultBean;
 import com.drkj.foxconn.bean.RegionResultBean;
+import com.drkj.foxconn.db.DbConstant;
 import com.drkj.foxconn.db.DbController;
 
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +37,13 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
 
     @BindView(R.id.list_equipment)
     ListView listView;
+    @BindView(R.id.offline_check_tv_building)
+    TextView tvBuilding;
+    @BindView(R.id.offline_check_tv_storey)
+    TextView tvStorey;
+    @BindView(R.id.offline_check_tv_room)
+    TextView tvRoom;
+
     List<EquipmentResultBean.DataBean> dataBeans;
 
     public OfflineCheckAdapter offlineCheckAdapter;
@@ -78,33 +89,47 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
         Log.e("fragment", "onResume");
     }
 
+    private void setTab(TextView target) {
+        tvBuilding.setTextColor(ContextCompat.getColor(activity, R.color.gray));
+        tvStorey.setTextColor(ContextCompat.getColor(activity, R.color.gray));
+        tvRoom.setTextColor(ContextCompat.getColor(activity, R.color.gray));
+        target.setTextColor(ContextCompat.getColor(activity, R.color.black));
+    }
+
     @Override
     public void onNfcReceived(@NotNull String nfcCode) {
         if (!isHidden()) {
             if (!TextUtils.isEmpty(nfcCode)) {
-                nfcCode = "XJ" + nfcCode.trim().substring(0, 6);
-                EquipmentResultBean.DataBean equipmentBean = DbController.getInstance().queryEquipmentByNfcCode(nfcCode);
+                if (!nfcCode.contains(DbConstant.NFC_HEAD)) {
+                    nfcCode = DbConstant.NFC_HEAD + nfcCode.trim().substring(0, 6);
+                }
+
                 RegionResultBean.DataBean regionBean = DbController.getInstance().queryRegionByNfcCode(nfcCode);
-
-                if (equipmentBean != null) {
-                    Intent intent = new Intent(activity, CheckActivity.class);
-                    intent.putExtra("equipment", (Serializable) equipmentBean);
-                    startActivity(intent);
-                } else if (regionBean != null) {
-                    if (regionBean.getType().equals("1")) {//楼栋
-
-                    } else if (regionBean.getType().equals("2")) {//楼层
-
-                    } else if (regionBean.getType().equals("3")) {//机房
-
-                    } else {
-                        Toast.makeText(activity, "没有:" + nfcCode + "的信息", Toast.LENGTH_SHORT).show();
+                if (!TextUtils.isEmpty(regionBean.getType())) {
+                    switch (regionBean.getType()) {
+                        case DbConstant.TYPE_BUILDING:
+                            setTab(tvBuilding);
+                            setListBeans(DbController.getInstance().queryAllEquipmentByBuilding(regionBean.getId()));
+                            break;
+                        case DbConstant.TYPE_STOREY:
+                            setTab(tvStorey);
+                            setListBeans(DbController.getInstance().queryAllEquipmentByStorey(regionBean.getId()));
+                            break;
+                        case DbConstant.TYPE_ROOM:
+                            setTab(tvRoom);
+                            setListBeans(DbController.getInstance().queryAllEquipmentByRoom(regionBean.getId()));
+                            break;
                     }
                 }
-                Toast.makeText(activity, "收到:" + nfcCode, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(activity, "读取失败，请重新刷卡", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void setListBeans(List<EquipmentResultBean.DataBean> list) {
+        offlineCheckAdapter = new OfflineCheckAdapter(activity, list);
+        listView.setAdapter(offlineCheckAdapter);
+        offlineCheckAdapter.notifyDataSetChanged();
     }
 }

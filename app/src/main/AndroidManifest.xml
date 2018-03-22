@@ -27,13 +27,22 @@
         <activity android:name=".activties.MainActivity" />
         <activity
             android:name=".activties.CheckActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".activties.FeedbackActivity" />
-        <activity android:name=".activties.EquipmentFaultActivity" />
+        <activity
+            android:name=".activties.FeedbackActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activties.EquipmentFaultActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activties.NewMainKotlinActivity" />
+        <activity
+            android:name=".activties.NewMainKotlinActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activties.NewLoginKotlinActivity">
+        <activity
+            android:name=".activties.NewLoginKotlinActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

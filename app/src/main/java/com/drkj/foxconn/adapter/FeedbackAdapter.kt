@@ -36,12 +36,12 @@ class FeedbackAdapter(context: Context, beanList: List<FeedbackBean>) : BaseAdap
         }
 
         if (currentBean.type == "0") {
-            holder.tvTitle.text = "人为"
+            holder.tvTitle.text = "问题类型：人为"
         } else {
-            holder.tvTitle.text = "非人为"
+            holder.tvTitle.text = "问题类型：非人为"
         }
 
-        holder.tvLocation.text = currentBean.regionName
+        holder.tvLocation.text = "位置：${currentBean.regionName}"
 
         when (position % 3) {
             0 -> holder.bgLayout.setBackgroundResource(R.drawable.ic_orange_bg)

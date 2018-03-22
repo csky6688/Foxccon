@@ -1,38 +1,55 @@
 package com.drkj.foxconn.bean;
 
-import java.util.List;
-
 /**
  * Created by ganlong on 2018/1/31.
  */
 
 public class StartTaskBean {
 
+
     /**
+     * chiefApprovalSuggestion : string
      * createBy : string
-     * createDate : 2018-01-31T02:44:25.670Z
+     * createDate : 2018-03-22T04:16:07.825Z
      * createName : string
+     * equipmentQuantity : 0
      * id : string
-     * inspectingPersonId : string
+     * ministerApprovalSuggestion : string
      * name : string
      * status : string
-     * taskRecordList : [{"createBy":"string","createDate":"2018-01-31T02:44:25.670Z","createName":"string","equipmentAttributeId":"string","equipmentId":"string","equipmentName":"string","id":"string","recordTime":"2018-01-31T02:44:25.670Z","taskId":"string","updateBy":"string","updateDate":"2018-01-31T02:44:25.670Z","updateName":"string","value":0}]
+     * taskQuantity : 0
+     * type : string
      * updateBy : string
-     * updateDate : 2018-01-31T02:44:25.670Z
+     * updateDate : 2018-03-22T04:16:07.825Z
      * updateName : string
+     * userId : string
+     * userName : string
      */
 
+    private String chiefApprovalSuggestion;
     private String createBy;
     private String createDate;
     private String createName;
+    private int equipmentQuantity;
     private String id;
-    private String inspectingPersonId;
+    private String ministerApprovalSuggestion;
     private String name;
     private String status;
+    private int taskQuantity;
+    private String type;
     private String updateBy;
     private String updateDate;
     private String updateName;
-    private List<TaskRecordListBean> taskRecordList;
+    private String userId;
+    private String userName;
+
+    public String getChiefApprovalSuggestion() {
+        return chiefApprovalSuggestion;
+    }
+
+    public void setChiefApprovalSuggestion(String chiefApprovalSuggestion) {
+        this.chiefApprovalSuggestion = chiefApprovalSuggestion;
+    }
 
     public String getCreateBy() {
         return createBy;
@@ -58,6 +75,14 @@ public class StartTaskBean {
         this.createName = createName;
     }
 
+    public int getEquipmentQuantity() {
+        return equipmentQuantity;
+    }
+
+    public void setEquipmentQuantity(int equipmentQuantity) {
+        this.equipmentQuantity = equipmentQuantity;
+    }
+
     public String getId() {
         return id;
     }
@@ -66,12 +91,12 @@ public class StartTaskBean {
         this.id = id;
     }
 
-    public String getInspectingPersonId() {
-        return inspectingPersonId;
+    public String getMinisterApprovalSuggestion() {
+        return ministerApprovalSuggestion;
     }
 
-    public void setInspectingPersonId(String inspectingPersonId) {
-        this.inspectingPersonId = inspectingPersonId;
+    public void setMinisterApprovalSuggestion(String ministerApprovalSuggestion) {
+        this.ministerApprovalSuggestion = ministerApprovalSuggestion;
     }
 
     public String getName() {
@@ -88,6 +113,22 @@ public class StartTaskBean {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getTaskQuantity() {
+        return taskQuantity;
+    }
+
+    public void setTaskQuantity(int taskQuantity) {
+        this.taskQuantity = taskQuantity;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getUpdateBy() {
@@ -114,147 +155,19 @@ public class StartTaskBean {
         this.updateName = updateName;
     }
 
-    public List<TaskRecordListBean> getTaskRecordList() {
-        return taskRecordList;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setTaskRecordList(List<TaskRecordListBean> taskRecordList) {
-        this.taskRecordList = taskRecordList;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public static class TaskRecordListBean {
-        /**
-         * createBy : string
-         * createDate : 2018-01-31T02:44:25.670Z
-         * createName : string
-         * equipmentAttributeId : string
-         * equipmentId : string
-         * equipmentName : string
-         * id : string
-         * recordTime : 2018-01-31T02:44:25.670Z
-         * taskId : string
-         * updateBy : string
-         * updateDate : 2018-01-31T02:44:25.670Z
-         * updateName : string
-         * value : 0
-         */
+    public String getUserName() {
+        return userName;
+    }
 
-        private String createBy;
-        private String createDate;
-        private String createName;
-        private String equipmentAttributeId;
-        private String equipmentId;
-        private String equipmentName;
-        private String id;
-        private String recordTime;
-        private String taskId;
-        private String updateBy;
-        private String updateDate;
-        private String updateName;
-        private double value;
-
-        public String getCreateBy() {
-            return createBy;
-        }
-
-        public void setCreateBy(String createBy) {
-            this.createBy = createBy;
-        }
-
-        public String getCreateDate() {
-            return createDate;
-        }
-
-        public void setCreateDate(String createDate) {
-            this.createDate = createDate;
-        }
-
-        public String getCreateName() {
-            return createName;
-        }
-
-        public void setCreateName(String createName) {
-            this.createName = createName;
-        }
-
-        public String getEquipmentAttributeId() {
-            return equipmentAttributeId;
-        }
-
-        public void setEquipmentAttributeId(String equipmentAttributeId) {
-            this.equipmentAttributeId = equipmentAttributeId;
-        }
-
-        public String getEquipmentId() {
-            return equipmentId;
-        }
-
-        public void setEquipmentId(String equipmentId) {
-            this.equipmentId = equipmentId;
-        }
-
-        public String getEquipmentName() {
-            return equipmentName;
-        }
-
-        public void setEquipmentName(String equipmentName) {
-            this.equipmentName = equipmentName;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public String getRecordTime() {
-            return recordTime;
-        }
-
-        public void setRecordTime(String recordTime) {
-            this.recordTime = recordTime;
-        }
-
-        public String getTaskId() {
-            return taskId;
-        }
-
-        public void setTaskId(String taskId) {
-            this.taskId = taskId;
-        }
-
-        public String getUpdateBy() {
-            return updateBy;
-        }
-
-        public void setUpdateBy(String updateBy) {
-            this.updateBy = updateBy;
-        }
-
-        public String getUpdateDate() {
-            return updateDate;
-        }
-
-        public void setUpdateDate(String updateDate) {
-            this.updateDate = updateDate;
-        }
-
-        public String getUpdateName() {
-            return updateName;
-        }
-
-        public void setUpdateName(String updateName) {
-            this.updateName = updateName;
-        }
-
-        public double getValue() {
-            return value;
-        }
-
-        public void setValue(double value) {
-            this.value = value;
-        }
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

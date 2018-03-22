@@ -16,8 +16,6 @@ import com.drkj.foxconn.R;
 import com.drkj.foxconn.net.NetClient;
 import com.drkj.foxconn.util.SpUtil;
 
-import java.io.IOException;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -25,8 +23,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LoginActivity extends BaseActivity {
@@ -61,7 +57,7 @@ public class LoginActivity extends BaseActivity {
 
         userName.setText(SpUtil.getString(this, "username"));
         password.setText(SpUtil.getString(this, "password"));
-        remember.setChecked(SpUtil.getBlooean(this, "check"));
+        remember.setChecked(SpUtil.getBoolean(this, "check"));
     }
 
     @OnClick(R.id.button_login)
@@ -71,7 +67,7 @@ public class LoginActivity extends BaseActivity {
             Toast.makeText(this, "帐号和密码不能为空", Toast.LENGTH_SHORT).show();
             return;
         }
-        SpUtil.putBlooean(this, "check", remember.isChecked());
+        SpUtil.putBoolean(this, "check", remember.isChecked());
         if (remember.isChecked()) {
             SpUtil.putString(this, "username", userName.getText().toString());
             SpUtil.putString(this, "password", password.getText().toString());

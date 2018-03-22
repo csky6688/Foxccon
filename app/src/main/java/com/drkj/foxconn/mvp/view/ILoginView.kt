@@ -13,5 +13,9 @@ interface ILoginView : IBaseView {
 
     fun onLoginFailed()
 
+    fun onUserInfoFinish()
+
+    fun onUserInfoFailed()
+
     fun onReceiveMsg(msg: String)
 }

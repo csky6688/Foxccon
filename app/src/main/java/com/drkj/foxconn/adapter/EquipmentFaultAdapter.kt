@@ -35,12 +35,12 @@ class EquipmentFaultAdapter(context: Context, beanList: List<EquipmentFaultBean>
         }
 
         if (currentBean.type == "0") {
-            holder.tvTitle.text = "人为"
+            holder.tvTitle.text = "问题类型：人为"
         } else {
-            holder.tvTitle.text = "非人为"
+            holder.tvTitle.text = "问题类型：非人为"
         }
 
-        holder.tvLocation.text = currentBean.equipmentName
+        holder.tvLocation.text = "设备：${currentBean.equipmentName}"
 
         when (position % 3) {
             0 -> holder.bgLayout.setBackgroundResource(R.drawable.ic_orange_bg)

@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.drkj.foxconn.db.DbController;
 import com.drkj.foxconn.util.FileUtil;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
 
 import java.io.File;
 
@@ -21,6 +23,7 @@ public class App extends Application {
         instance = this;
         DbController.getInstance();
         initFile();
+        Logger.addLogAdapter(new AndroidLogAdapter());
     }
 
     private void initFile() {

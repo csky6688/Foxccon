@@ -12,6 +12,15 @@ object DbConstant {
 
     const val TABLE_REGION = "region_list"
 
+    // 1 楼栋 2 楼层 3 机房
+    const val TYPE_BUILDING = "1"
+
+    const val TYPE_STOREY = "2"
+
+    const val TYPE_ROOM = "3"
+
+    const val NFC_HEAD = "XJ"
+
     const val CREATE_TABLE_REGION = "create table $TABLE_REGION" +
             "(_id int auto_increment primary key," +
             "code text," +
