@@ -22,6 +22,8 @@ import com.drkj.foxconn.bean.EquipmentResultBean;
 import com.drkj.foxconn.bean.RegionResultBean;
 import com.drkj.foxconn.db.DbConstant;
 import com.drkj.foxconn.db.DbController;
+import com.drkj.foxconn.util.NfcCardUtil;
+import com.orhanobut.logger.Logger;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -52,6 +54,8 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
 
     private NewMainKotlinActivity activity;
 
+    private NfcCardUtil nfcCardUtil;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -65,6 +69,7 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
         super.onActivityCreated(savedInstanceState);
         activity = (NewMainKotlinActivity) getActivity();
         activity.setOnNfcListener(this);
+        nfcCardUtil = new NfcCardUtil(activity);
     }
 
     @OnItemClick(R.id.list_equipment)
@@ -85,10 +90,48 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
     @Override
     public void onResume() {
         super.onResume();
-        dataBeans = DbController.getInstance().queryAllEquipment();
+
+        String newCode = nfcCardUtil.readPointData(activity.getIntent(), 0, 1);
+
+        if (!TextUtils.isEmpty(newCode) && !newCode.contains(DbConstant.NFC_HEAD)) {
+            newCode = DbConstant.NFC_HEAD + newCode.trim().substring(0, 6);
+        }
+        Logger.d(newCode);
+        RegionResultBean.DataBean regionBean = DbController.getInstance().queryRegionByNfcCode(newCode);
+        if (!TextUtils.isEmpty(regionBean.getType()) && !TextUtils.isEmpty(regionBean.getName())) {
+            switch (regionBean.getType()) {
+                case DbConstant.TYPE_BUILDING:
+                    setTab(tvBuilding);
+                    dataBeans = DbController.getInstance().queryAllEquipmentByBuilding(regionBean.getId());
+                    break;
+                case DbConstant.TYPE_STOREY:
+                    setTab(tvStorey);
+                    dataBeans = DbController.getInstance().queryAllEquipmentByStorey(regionBean.getId());
+                    break;
+                case DbConstant.TYPE_ROOM:
+                    setTab(tvRoom);
+                    dataBeans = DbController.getInstance().queryAllEquipmentByRoom(regionBean.getId());
+                    break;
+            }
+        }
+
+        if (!TextUtils.isEmpty(newCode) && TextUtils.isEmpty(regionBean.getName())) {
+            List<EquipmentResultBean.DataBean> singleEquipmentList = new ArrayList<>();
+            EquipmentResultBean.DataBean bean = DbController.getInstance().queryEquipmentByNfcCode(newCode);
+            singleEquipmentList.add(bean);
+            if (!TextUtils.isEmpty(bean.getName())) {
+                dataBeans = singleEquipmentList;
+                setListBeans(singleEquipmentList);
+                setTab(tvEquipment);
+            }
+
+        } else if (TextUtils.isEmpty(newCode)) {
+            dataBeans = DbController.getInstance().queryAllEquipment();
+        }
+
         offlineCheckAdapter = new OfflineCheckAdapter(getContext(), dataBeans);
         listView.setAdapter(offlineCheckAdapter);
-        Log.e("fragment", "onResume");
+        Log.e("fragment", "onResumeNfc");
     }
 
     private void setTab(TextView target) {
@@ -103,12 +146,8 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
     public void onNfcReceived(@NotNull String nfcCode) {
         if (!isHidden()) {
             if (!TextUtils.isEmpty(nfcCode)) {
-                if (!nfcCode.contains(DbConstant.NFC_HEAD)) {
-                    nfcCode = DbConstant.NFC_HEAD + nfcCode.trim().substring(0, 6);
-                }
-
                 RegionResultBean.DataBean regionBean = DbController.getInstance().queryRegionByNfcCode(nfcCode);
-                if (!TextUtils.isEmpty(regionBean.getType())) {
+                if (!TextUtils.isEmpty(regionBean.getType()) && !TextUtils.isEmpty(regionBean.getName())) {
                     switch (regionBean.getType()) {
                         case DbConstant.TYPE_BUILDING:
                             setTab(tvBuilding);
@@ -122,17 +161,19 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
                             setTab(tvRoom);
                             setListBeans(DbController.getInstance().queryAllEquipmentByRoom(regionBean.getId()));
                             break;
-                        default:
-                            setTab(tvEquipment);
-                            List<EquipmentResultBean.DataBean> singleEquipmentList = new ArrayList<>();
-                            singleEquipmentList.add(DbController.getInstance().queryEquipmentByNfcCode(nfcCode));
-                            setListBeans(singleEquipmentList);
-                            break;
                     }
                 }
 
-//                if ()
-
+                if (!TextUtils.isEmpty(nfcCode) && TextUtils.isEmpty(regionBean.getName())) {
+                    setTab(tvEquipment);
+                    List<EquipmentResultBean.DataBean> singleEquipmentList = new ArrayList<>();
+                    EquipmentResultBean.DataBean bean = DbController.getInstance().queryEquipmentByNfcCode(nfcCode);
+                    if (!TextUtils.isEmpty(bean.getName())) {
+                        singleEquipmentList.add(bean);
+                        dataBeans = singleEquipmentList;
+                        setListBeans(singleEquipmentList);
+                    }
+                }
             } else {
                 Toast.makeText(activity, "读取失败，请重新刷卡", Toast.LENGTH_SHORT).show();
             }
@@ -142,6 +183,5 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
     private void setListBeans(List<EquipmentResultBean.DataBean> list) {
         offlineCheckAdapter = new OfflineCheckAdapter(activity, list);
         listView.setAdapter(offlineCheckAdapter);
-        offlineCheckAdapter.notifyDataSetChanged();
     }
 }

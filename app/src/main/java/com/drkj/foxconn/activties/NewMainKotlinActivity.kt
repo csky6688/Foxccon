@@ -86,7 +86,7 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setIntent(intent)
-        onNfcListener?.onNfcReceived(nfcCardUtil!!.readPointData(intent, 0, 1))
+//        onNfcListener?.onNfcReceived(nfcCardUtil!!.readPointData(intent, 0, 1))
 //        nfcCardUtil!!.readPointData(intent, 0, 1)
     }
 

@@ -476,7 +476,7 @@ public class DbController {
      * @return
      */
     public List<EndTaskBean> queryAllEndTask(String taskId) {
-        List<EquipmentResultBean.DataBean> equipmentList = queryAllEquipment();
+        List<EquipmentResultBean.DataBean> equipmentList = queryAllEquipmentWithValue();
         List<EndTaskBean> endBeanList = new ArrayList<>();
 
         for (EquipmentResultBean.DataBean bean : equipmentList) {
@@ -580,6 +580,9 @@ public class DbController {
     }
 
     public RegionResultBean.DataBean queryRegionInfoById(String id) {
+//        if (TextUtils.isEmpty(id)) {
+//            return new RegionResultBean.DataBean();
+//        }
         RegionResultBean.DataBean dataBean = new RegionResultBean.DataBean();
         SQLiteDatabase db = sqlHelper.getReadableDatabase();
         Cursor cursor = db.query(DbConstant.TABLE_REGION, null, "id=?", new String[]{id}, null, null, null);

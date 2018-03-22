@@ -67,6 +67,8 @@ public class DataSynchronizationFragment extends Fragment {
 
     private NewMainKotlinActivity activity;
 
+    private boolean once = true;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -143,12 +145,12 @@ public class DataSynchronizationFragment extends Fragment {
         dialog.setCancelable(false);
         dialog.show();
 
-
         NetClient.getInstance().getApi().getRegion(SpUtil.getString(getContext(), "token"))
                 .subscribeOn(Schedulers.newThread())
                 .flatMap(new Function<RegionResultBean, ObservableSource<EquipmentResultBean>>() {
                     @Override
                     public ObservableSource<EquipmentResultBean> apply(RegionResultBean regionResultBean) throws Exception {
+                        Logger.t("region").e(new Gson().toJson(regionResultBean));
                         DbController.getInstance().saveRegionInfo(regionResultBean);
                         return NetClient.getInstance().getApi().getEquipment(SpUtil.getString(getContext(), "token"));
                     }
@@ -211,10 +213,12 @@ public class DataSynchronizationFragment extends Fragment {
 
         List<EndTaskBean> endTaskBeanList = DbController.getInstance().queryAllEndTask(SpUtil.getString(getContext(), SpUtil.TASK_ID));
         if (endTaskBeanList.size() == 0) {
-            Toast.makeText(activity, "没有已巡检的数据", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "巡检未开始", Toast.LENGTH_SHORT).show();
             dialog.dismiss();
             return;
         }
+
+        once = true;//成功以后只重新绘制一次
         for (final EndTaskBean endTaskBean : endTaskBeanList) {
             endTaskBean.setEquipmentType(SpUtil.getString(activity, SpUtil.TASK_TYPE));
             Logger.d(new Gson().toJson(endTaskBean));
@@ -235,9 +239,14 @@ public class DataSynchronizationFragment extends Fragment {
 //                                    SpUtil.putString(activity, SpUtil.TASK_ID, "");//清除taskId
 //                                    DbController.getInstance().deleteEquipmentCheck();
 //                                }
-                                activity.getFragmentList().get(activity.getFRAGMENT_OFFLINE_CHECK()).onResume();
-                                activity.hideTab();
-                                activity.switchFragment(activity.getFragmentList().get(activity.getFRAGMENT_OFFLINE_CHECK()));
+
+                                if (once) {
+                                    once = false;
+                                    activity.getFragmentList().get(activity.getFRAGMENT_OFFLINE_CHECK()).onResume();
+                                    activity.hideTab();
+                                    activity.switchFragment(activity.getFragmentList().get(activity.getFRAGMENT_OFFLINE_CHECK()));
+                                }
+
                                 dialog.findViewById(R.id.dialog_btn_confirm).setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {

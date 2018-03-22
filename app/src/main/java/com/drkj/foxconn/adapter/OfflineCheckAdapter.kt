@@ -45,6 +45,10 @@ class OfflineCheckAdapter(context: Context, dataBeans: List<EquipmentResultBean.
         holder.equipmentDefaultCode.text = mDataBeans[position].code
         holder.equipmentNfcCode.text = mDataBeans[position].nfcCode
 
+        if (!TextUtils.isEmpty(mDataBeans[position].buildingId)){
+
+        }
+
         val dataBean0 = DbController.getInstance().queryRegionInfoById(mDataBeans[position].buildingId)
         holder.buildingNameText.text = dataBean0.name
 
