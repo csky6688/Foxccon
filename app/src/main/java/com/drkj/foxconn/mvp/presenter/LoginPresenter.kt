@@ -8,6 +8,7 @@ import com.drkj.foxconn.db.DbController
 import com.drkj.foxconn.mvp.BasePresenter
 import com.drkj.foxconn.mvp.view.ILoginView
 import com.drkj.foxconn.net.NetClient
+import com.drkj.foxconn.util.FileUtil
 import com.drkj.foxconn.util.SpUtil
 import com.google.gson.Gson
 import com.orhanobut.logger.Logger
@@ -36,45 +37,52 @@ class LoginPresenter : BasePresenter<ILoginView>() {
                             rootView!!.onLoginFinish(token)
                         }
                         it.code() == 404 -> {
-                            rootView!!.onReceiveMsg("帐号或者密码错误")
-                            rootView!!.onLoginFailed()
+                            rootView!!.onReceiveMsg("帐号密码错误或无法访问服务器:404")
                         }
                         else -> {
                             rootView!!.onReceiveMsg("服务器异常")
-                            rootView!!.onLoginFailed()
                         }
                     }
                 }, {
-                    rootView!!.onLoginFailed()
+                    rootView!!.onLoginFailed(it)
                 })
     }
 
-    fun getUserInfo(context: Context) {
-        NetClient.getInstance().api.getTypeUser(SpUtil.getString(context, SpUtil.TOKEN))
+    fun getUserInfo(context: Context, userName: EditText, password: EditText) {
+        val token = SpUtil.getString(context, SpUtil.TOKEN)
+
+        NetClient.getInstance().api.getTypeUser(token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    Logger.d(Gson().toJson(it))
-                    when (it.respCode) {
-                        "0" -> {
-                            it.data.filter { it.userAccount == SpUtil.getString(context, SpUtil.USERNAME) }
-                                    .forEach {
-                                        SpUtil.putString(context, SpUtil.REAL_NAME, it.userName)
-                                        SpUtil.putString(context, SpUtil.TASK_TYPE, it.equipmentType)
-                                        SpUtil.putString(context, SpUtil.USER_ID, it.userId)
-                                        SpUtil.putString(context, SpUtil.TASK_ID, "")//清除taskId
-                                        DbController.getInstance().deleteAllData()
-                                    }
-                            if (!TextUtils.isEmpty(SpUtil.getString(context, SpUtil.REAL_NAME)) && !TextUtils.isEmpty(SpUtil.getString(context, SpUtil.TASK_TYPE))) {
-                                rootView!!.onUserInfoFinish()
-                            } else {
-                                rootView!!.onUserInfoFailed()
-                            }
+
+                    var realName: String? = null
+
+                    var taskType: String? = null
+
+                    var userId: String? = null
+
+                    for (item in it.data) {
+                        if (item.userAccount == userName.text.toString()) {
+                            realName = item.userName
+                            taskType = item.equipmentType
+                            userId = item.userId
+
+                            SpUtil.putString(context, SpUtil.REAL_NAME, item.userName)
+                            SpUtil.putString(context, SpUtil.TASK_TYPE, item.equipmentType)
+                            SpUtil.putString(context, SpUtil.USER_ID, item.userId)
+                            SpUtil.putString(context, SpUtil.TASK_ID, "")
+                            break
                         }
-                        else -> rootView!!.onUserInfoFailed()
+                    }
+
+                    if (!TextUtils.isEmpty(realName) && !TextUtils.isEmpty(taskType)) {
+                        rootView!!.onUserInfoFinish()
+                    } else {
+                        rootView!!.onUserInfoFailed("realName:$realName\ntaskType:$taskType")
                     }
                 }, {
-                    rootView!!.onLoginFailed()
+                    rootView!!.onLoginFailed(it)
                 })
     }
 }

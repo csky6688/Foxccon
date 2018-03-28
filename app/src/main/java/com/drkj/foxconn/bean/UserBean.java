@@ -8,23 +8,23 @@ import java.util.List;
 public class UserBean {
 
     /**
-     * ok : true
-     * respCode : 0
-     * data : [{"createDate":"2018-03-15 02:13:26","userId":"8a8ab0b246dc81120146dc8181950052","updateDate":null,"createName":"管理员","createBy":"admin","updateName":null,"updateBy":null,"userAccount":"admin","equipmentType":"1","userName":"管理员","id":"8aaa4f1c621ed8ef0162276ef65f0050"},{"createDate":"2018-03-15 02:16:31","userId":"402880e74d75c4dd014d75d44af30005","updateDate":null,"createName":"管理员","createBy":"admin","updateName":null,"updateBy":null,"userAccount":"demo","equipmentType":"1","userName":"real demo","id":"8aaa4f1c621ed8ef01622771c6f90057"},{"createDate":"2018-03-15 02:19:52","userId":"8aaa4f1c621ed8ef0162239a0c5c0003","updateDate":null,"createName":"管理员","createBy":"admin","updateName":null,"updateBy":null,"userAccount":"ddddd","equipmentType":"0","userName":"ddddd","id":"8aaa4f1c621ed8ef01622774db1f005c"}]
      * message : 成功
+     * data : [{"id":"40288187622c7c7501622c8101c60016","userName":"管理员","userAccount":"admin","equipmentType":"2","createName":"管理员","createBy":"admin","createDate":"2018-03-16 09:51:14","updateName":null,"updateBy":null,"updateDate":null,"userId":"8a8ab0b246dc81120146dc8181950052"},{"id":"402881876247861a0162478750560001","userName":"real demo","userAccount":"demo","equipmentType":"1","createName":"管理员","createBy":"admin","createDate":"2018-03-21 15:47:53","updateName":null,"updateBy":null,"updateDate":null,"userId":"402880e74d75c4dd014d75d44af30005"},{"id":"402881876247861a016247877a1e0003","userName":"巡检员","userAccount":"system","equipmentType":"0","createName":"管理员","createBy":"admin","createDate":"2018-03-21 15:48:03","updateName":null,"updateBy":null,"updateDate":null,"userId":"40288187622c844801622c8a698d0013"}]
+     * respCode : 0
+     * ok : true
      */
 
-    private boolean ok;
-    private String respCode;
     private String message;
+    private String respCode;
+    private boolean ok;
     private List<DataBean> data;
 
-    public boolean isOk() {
-        return ok;
+    public String getMessage() {
+        return message;
     }
 
-    public void setOk(boolean ok) {
-        this.ok = ok;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public String getRespCode() {
@@ -35,12 +35,12 @@ public class UserBean {
         this.respCode = respCode;
     }
 
-    public String getMessage() {
-        return message;
+    public boolean isOk() {
+        return ok;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setOk(boolean ok) {
+        this.ok = ok;
     }
 
     public List<DataBean> getData() {
@@ -53,85 +53,45 @@ public class UserBean {
 
     public static class DataBean {
         /**
-         * createDate : 2018-03-15 02:13:26
-         * userId : 8a8ab0b246dc81120146dc8181950052
-         * updateDate : null
+         * id : 40288187622c7c7501622c8101c60016
+         * userName : 管理员
+         * userAccount : admin
+         * equipmentType : 2
          * createName : 管理员
          * createBy : admin
+         * createDate : 2018-03-16 09:51:14
          * updateName : null
          * updateBy : null
-         * userAccount : admin
-         * equipmentType : 1
-         * userName : 管理员
-         * id : 8aaa4f1c621ed8ef0162276ef65f0050
+         * updateDate : null
+         * userId : 8a8ab0b246dc81120146dc8181950052
          */
 
-        private String createDate;
-        private String userId;
-        private Object updateDate;
-        private String createName;
-        private String createBy;
-        private Object updateName;
-        private Object updateBy;
+        private String id;
+        private String userName;
         private String userAccount;
         private String equipmentType;
-        private String userName;
-        private String id;
+        private String createName;
+        private String createBy;
+        private String createDate;
+        private Object updateName;
+        private Object updateBy;
+        private Object updateDate;
+        private String userId;
 
-        public String getCreateDate() {
-            return createDate;
+        public String getId() {
+            return id;
         }
 
-        public void setCreateDate(String createDate) {
-            this.createDate = createDate;
+        public void setId(String id) {
+            this.id = id;
         }
 
-        public String getUserId() {
-            return userId;
+        public String getUserName() {
+            return userName;
         }
 
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
-
-        public Object getUpdateDate() {
-            return updateDate;
-        }
-
-        public void setUpdateDate(Object updateDate) {
-            this.updateDate = updateDate;
-        }
-
-        public String getCreateName() {
-            return createName;
-        }
-
-        public void setCreateName(String createName) {
-            this.createName = createName;
-        }
-
-        public String getCreateBy() {
-            return createBy;
-        }
-
-        public void setCreateBy(String createBy) {
-            this.createBy = createBy;
-        }
-
-        public Object getUpdateName() {
-            return updateName;
-        }
-
-        public void setUpdateName(Object updateName) {
-            this.updateName = updateName;
-        }
-
-        public Object getUpdateBy() {
-            return updateBy;
-        }
-
-        public void setUpdateBy(Object updateBy) {
-            this.updateBy = updateBy;
+        public void setUserName(String userName) {
+            this.userName = userName;
         }
 
         public String getUserAccount() {
@@ -150,20 +110,60 @@ public class UserBean {
             this.equipmentType = equipmentType;
         }
 
-        public String getUserName() {
-            return userName;
+        public String getCreateName() {
+            return createName;
         }
 
-        public void setUserName(String userName) {
-            this.userName = userName;
+        public void setCreateName(String createName) {
+            this.createName = createName;
         }
 
-        public String getId() {
-            return id;
+        public String getCreateBy() {
+            return createBy;
         }
 
-        public void setId(String id) {
-            this.id = id;
+        public void setCreateBy(String createBy) {
+            this.createBy = createBy;
+        }
+
+        public String getCreateDate() {
+            return createDate;
+        }
+
+        public void setCreateDate(String createDate) {
+            this.createDate = createDate;
+        }
+
+        public Object getUpdateName() {
+            return updateName;
+        }
+
+        public void setUpdateName(Object updateName) {
+            this.updateName = updateName;
+        }
+
+        public Object getUpdateBy() {
+            return updateBy;
+        }
+
+        public void setUpdateBy(Object updateBy) {
+            this.updateBy = updateBy;
+        }
+
+        public Object getUpdateDate() {
+            return updateDate;
+        }
+
+        public void setUpdateDate(Object updateDate) {
+            this.updateDate = updateDate;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
         }
     }
 }

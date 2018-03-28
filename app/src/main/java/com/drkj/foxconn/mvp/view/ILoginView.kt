@@ -11,11 +11,11 @@ interface ILoginView : IBaseView {
 
     fun onLoginFinish(token: String)
 
-    fun onLoginFailed()
+    fun onLoginFailed(throwable: Throwable)
 
     fun onUserInfoFinish()
 
-    fun onUserInfoFailed()
+    fun onUserInfoFailed(msg: String)
 
     fun onReceiveMsg(msg: String)
 }

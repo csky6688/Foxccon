@@ -166,7 +166,7 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
             feedbackBean.setId(tempId);
             feedbackBean.setLocation(tvLocation.getText().toString());
             feedbackBean.setRegionName(tvLocation.getText().toString());
-            feedbackBean.setRegionCode(mNfcCode);
+            feedbackBean.setRegionCode(tvLocationCode.getText().toString());
             feedbackBean.setCreateDate(DateUtil.INSTANCE.getDate());
             List<FeedbackBean.LocalFeedbackPictureListBean> pictureBeanList = new ArrayList<>();
             for (File file : mAdapter.getAllData()) {
@@ -185,7 +185,7 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
             feedbackBean.setId(tempId);//必须重新更换id
             feedbackBean.setContent(content.getText().toString());
             feedbackBean.setRegionName(tvLocation.getText().toString());
-            feedbackBean.setRegionCode(mNfcCode);
+            feedbackBean.setRegionCode(tvLocationCode.getText().toString());
             feedbackBean.setType(type);
             feedbackBean.setLocation(tvLocation.getText().toString());
             List<FeedbackBean.LocalFeedbackPictureListBean> pictureListBeans = new ArrayList<>();

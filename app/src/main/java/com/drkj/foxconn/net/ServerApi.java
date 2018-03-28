@@ -35,12 +35,10 @@ import retrofit2.http.Query;
 
 /**
  * Created by ganlong on 2018/1/24.
- * <p>
  * Modify by VeronicaRen on 2018/2/27.
  * 修改提交巡检信息的接口地址
  * 增加图片url的请求接口
  */
-
 public interface ServerApi {
 
     //登录

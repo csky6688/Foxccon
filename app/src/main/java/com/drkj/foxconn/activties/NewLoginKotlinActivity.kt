@@ -72,10 +72,10 @@ class NewLoginKotlinActivity : BaseKotlinActivity(), ILoginView {
         SpUtil.putBoolean(this, SpUtil.REMEMBER, remember.isChecked)
         dialog?.dismiss()
 
-        presenter.getUserInfo(this)
+        presenter.getUserInfo(this, userName, password)
     }
 
-    override fun onLoginFailed() {
+    override fun onLoginFailed(throwable: Throwable) {
         loginButton.isEnabled = true
         if (remember.isChecked) {
             SpUtil.putString(this, SpUtil.USERNAME, userName.text.toString())
@@ -86,20 +86,30 @@ class NewLoginKotlinActivity : BaseKotlinActivity(), ILoginView {
         }
         SpUtil.putBoolean(this, SpUtil.REMEMBER, remember.isChecked)
         dialog?.dismiss()
-        Toast.makeText(this, "登录失败，请重试或检查网络连接", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "登录失败，请重试或检查网络连接\n${SpUtil.getString(this, SpUtil.TOKEN)}\n${throwable.message}", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onReceiveMsg(msg: String) {
+//        dialog?.dismiss()
+        loginButton.isEnabled = true
+        if (remember.isChecked) {
+            SpUtil.putString(this, SpUtil.USERNAME, userName.text.toString())
+            SpUtil.putString(this, SpUtil.PASSWORD, password.text.toString())
+        } else {
+            SpUtil.putString(this, SpUtil.USERNAME, "")
+            SpUtil.putString(this, SpUtil.PASSWORD, "")
+        }
+        SpUtil.putBoolean(this, SpUtil.REMEMBER, remember.isChecked)
+        dialog?.dismiss()
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
     override fun onUserInfoFinish() {
         startActivity(Intent(this, NewMainKotlinActivity::class.java))
-//        finish()
     }
 
-    override fun onUserInfoFailed() {
-        Toast.makeText(this, "获取用户信息失败，请检查用户数据是否录入正确", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onReceiveMsg(msg: String) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    override fun onUserInfoFailed(msg: String) {
+        Toast.makeText(this, "获取用户信息失败:\n$msg}", Toast.LENGTH_SHORT).show()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -108,16 +118,11 @@ class NewLoginKotlinActivity : BaseKotlinActivity(), ILoginView {
                 exitDialog = AlertDialog.Builder(this)
                         .setTitle("退出")
                         .setMessage("是否退出？")
-                        .setNegativeButton("取消", object : DialogInterface.OnClickListener {
-                            override fun onClick(p0: DialogInterface?, p1: Int) {
-                                p0?.dismiss()
-                            }
-                        })
-                        .setPositiveButton("确定", object : DialogInterface.OnClickListener {
-                            override fun onClick(p0: DialogInterface?, p1: Int) {
-                                finish()
-                            }
-                        })
+                        .setNegativeButton("取消") { dialog, msg -> dialog?.dismiss() }
+                        .setPositiveButton("确定") { dialog, msg ->
+                            dialog.dismiss()
+                            finish()
+                        }
                         .create()
                 exitDialog!!.show()
             }

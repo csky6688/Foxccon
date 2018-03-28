@@ -19,6 +19,14 @@ class FeedbackPresenter : BasePresenter<IFeedbackView>() {
         rootView!!.onDeployFeedback(feedbackBean)
     }
 
+    fun syncDecode(nfcCode: String) {
+
+    }
+
+    fun syncNfc(nfcCode: String) {
+
+    }
+
     fun queryFeedback(nfcCode: String) {
         val location = StringBuilder()
 
