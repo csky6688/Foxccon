@@ -235,16 +235,13 @@ public class DataSynchronizationFragment extends Fragment {
                                 message.setText("数据同步完成!");
                                 SpUtil.putString(activity, "taskId", "");
                                 DbController.getInstance().deleteAllCheckEquipment();
-//                                if (DbController.getInstance().queryNotCheckCount() <= 0) {//全部巡检结束时，为巡检的数量为0
-//                                    SpUtil.putString(activity, SpUtil.TASK_ID, "");//清除taskId
-//                                    DbController.getInstance().deleteEquipmentCheck();
-//                                }
 
                                 if (once) {
                                     once = false;
                                     activity.getFragmentList().get(activity.getFRAGMENT_OFFLINE_CHECK()).onResume();
                                     activity.hideTab();
                                     activity.switchFragment(activity.getFragmentList().get(activity.getFRAGMENT_OFFLINE_CHECK()));
+                                    activity.onClick(activity.findViewById(R.id.new_main_image_data_synchronization));
                                 }
 
                                 dialog.findViewById(R.id.dialog_btn_confirm).setOnClickListener(new View.OnClickListener() {
@@ -292,56 +289,6 @@ public class DataSynchronizationFragment extends Fragment {
                         }
                     });
         }
-
-        //        EndTaskBean endTaskBean = DbController.getInstance().queryAllAttribute();
-//        endTaskBean.setTaskId(SpUtil.getString(getContext(), SpUtil.TASK_ID));
-//        endTaskBean.setCreateDate(DateUtil.INSTANCE.getDate());
-//        endTaskBean.setCreateName(SpUtil.getString(activity, SpUtil.REAL_NAME));
-//        Log.e("task", new Gson().toJson(endTaskBean));
-//        Logger.d(new Gson().toJson(endTaskBean));
-
-//        NetClient.getInstance().getApi().endTask(SpUtil.getString(getContext(), "token"), endTaskBean)
-//                .subscribeOn(Schedulers.newThread())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Consumer<EndTaskResultBean>() {
-//                    @Override
-//                    public void accept(EndTaskResultBean endTaskResultBean) throws Exception {
-//                        if (endTaskResultBean != null && TextUtils.equals(endTaskResultBean.getRespCode(), "0")) {
-//                            dialog.findViewById(R.id.avi).setVisibility(View.GONE);
-//                            dialog.findViewById(R.id.button_confirm).setVisibility(View.VISIBLE);
-//                            TextView message = dialog.findViewById(R.id.text_message);
-//                            message.setText("数据同步完成!");
-//                            SpUtil.putString(activity, "taskId", null);
-//                            DbController.getInstance().deleteEquipmentCheck();
-//                            activity.getFragmentList().get(activity.getFRAGMENT_OFFLINE_CHECK()).onResume();
-//                            dialog.findViewById(R.id.button_confirm).setOnClickListener(new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View v) {
-//                                    dialog.dismiss();
-//                                }
-//                            });
-//                        } else {
-//                            dialog.dismiss();
-//                        }
-//                    }
-//                }, new Consumer<Throwable>() {
-//                    @Override
-//                    public void accept(Throwable throwable) throws Exception {
-//                        throwable.printStackTrace();
-//                        dialog.findViewById(R.id.avi).setVisibility(View.GONE);
-//                        dialog.findViewById(R.id.button_confirm).setVisibility(View.VISIBLE);
-//                        TextView message = dialog.findViewById(R.id.text_message);
-//                        Log.e("sync", throwable.getMessage());
-//                        message.setText("数据同步失败!");
-//                        dialog.findViewById(R.id.button_confirm).setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                dialog.dismiss();
-//                            }
-//                        });
-//                    }
-//                });
-//        dialog.dismiss();
         activity.getFragmentList().get(activity.getFRAGMENT_FEEDBACK()).onResume();
         activity.getFragmentList().get(activity.getFRAGMENT_FAULT()).onResume();
     }

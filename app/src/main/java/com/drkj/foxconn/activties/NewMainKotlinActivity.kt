@@ -148,7 +148,7 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
         }
     }
 
-    private fun resetButtons() {
+    fun resetButtons() {
         imageSync.setImageResource(R.drawable.ic_data_synchronization_unselected)
         imageOffline.setImageResource(R.drawable.ic_offline_check_unselected)
         imageFeedback.setImageResource(R.drawable.ic_scene_feedback_unselected)
@@ -171,6 +171,7 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
     }
 
     fun hideTab() {
+        resetButtons()
         runOnUiThread { layoutTab.visibility = View.GONE }
     }
 
