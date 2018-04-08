@@ -5,6 +5,11 @@
     <string name="data_download_success">数据下载完成！</string>
     <string name="data_download_failed">数据下载失败！</string>
 
+    <string name="device_name">设备名称：</string>
+    <string name="device_code">设备编码：</string>
+    <string name="device_location">设备位置：</string>
+    <string name="threshold">阈值：</string>
+
     <string name="data_synchronization">数据同步</string>
     <string name="offline_check">巡检作业</string>
     <string name="scene_feedback">现场反馈</string>
@@ -20,4 +25,11 @@
     <string name="scan_region_info">请扫描位置信息</string>
     <string name="really_logout">是否注销当前用户？</string>
     <string name="please_scan_tag">请扫描NFC</string>
+    <string name="check_has_not_finished">巡检未结束，不能下载数据</string>
+    <string name="check_has_not_start">未开始巡检</string>
+    <string name="please_download_data">请下载数据</string>
+    <string name="cannot_create_task">巡检任务未完成，不能创建新任务</string>
+    <string name="create_task_success">创建任务成功！</string>
+    <string name="create_task_failed">创建任务失败！</string>
+    <string name="really_delete_number_data">是否删除第%d条数据？</string>
 </resources>

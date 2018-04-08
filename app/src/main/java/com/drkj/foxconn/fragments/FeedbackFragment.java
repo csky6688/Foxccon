@@ -70,8 +70,7 @@ public class FeedbackFragment extends Fragment {
     @OnItemLongClick(R.id.listview_feedback)
     boolean itemLongClick(final int position) {
         dialog = new AlertDialog.Builder(getActivity())
-                .setTitle("警告")
-                .setMessage("是否删除第" + (position + 1) + "条数据")
+                .setMessage(String.format(getResources().getString(R.string.really_delete_number_data), (position + 1)))
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

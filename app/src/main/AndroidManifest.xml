@@ -17,14 +17,6 @@
         android:roundIcon="@mipmap/ic_logo_square"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activties.LoginActivity">
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN" />-->
-
-            <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        </activity>
-        <activity android:name=".activties.MainActivity" />
         <activity
             android:name=".activties.CheckActivity"
             android:screenOrientation="portrait"

@@ -134,7 +134,7 @@ public class DataSynchronizationFragment extends Fragment {
     @OnClick(R.id.image_download_data)
     void downloadData() {
         if (!TextUtils.isEmpty(SpUtil.getString(activity, SpUtil.TASK_ID))) {
-            Toast.makeText(activity, "巡检未结束，不能下载数据", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getResources().getString(R.string.check_has_not_finished), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -198,7 +198,7 @@ public class DataSynchronizationFragment extends Fragment {
     void uploadData() {
 
         if (TextUtils.isEmpty(SpUtil.getString(getContext(), "taskId"))) {
-            Toast.makeText(getContext(), "未开始巡检", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getResources().getString(R.string.check_has_not_start), Toast.LENGTH_SHORT).show();
             return;
         }
         final Dialog dialog = new Dialog(getActivity());
@@ -297,12 +297,12 @@ public class DataSynchronizationFragment extends Fragment {
     @OnClick(R.id.image_start_check)
     void startTask() {
         if (DbController.getInstance().queryAllEquipment() == null || DbController.getInstance().queryAllEquipment().size() == 0) {
-            Toast.makeText(activity, "请下载数据", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getResources().getString(R.string.please_download_data), Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (!TextUtils.isEmpty(SpUtil.getString(activity, SpUtil.TASK_ID))) {
-            Toast.makeText(activity, "巡检任务未完成，不能创建新任务", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getResources().getString(R.string.cannot_create_task), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -322,14 +322,14 @@ public class DataSynchronizationFragment extends Fragment {
                     public void accept(StartTaskResultBean startTaskResultBean) throws Exception {
                         dialog.dismiss();
                         if (TextUtils.equals("0", startTaskResultBean.getRespCode())) {
-                            Toast.makeText(App.getInstance(), "创建任务成功", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(App.getInstance(), getResources().getString(R.string.create_task_success), Toast.LENGTH_SHORT).show();
                             DbController.getInstance().deleteEquipmentCheck();//创建任务成功的时候，取消所有巡检状态
                             SpUtil.putString(getContext(), "taskId", startTaskResultBean.getData().getId());
                             Log.e("task", new Gson().toJson(startTaskResultBean));
                             activity.showTab();
                         } else {
                             Logger.t("task").e(new Gson().toJson(startTaskBean));
-                            Toast.makeText(App.getInstance(), "创建任务失败", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(App.getInstance(), getResources().getString(R.string.create_task_failed), Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, new Consumer<Throwable>() {
@@ -338,7 +338,7 @@ public class DataSynchronizationFragment extends Fragment {
                         dialog.dismiss();
                         throwable.printStackTrace();
                         Logger.t("task").e(throwable.getMessage());
-                        Toast.makeText(App.getInstance(), "创建任务失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(App.getInstance(), getResources().getString(R.string.create_task_failed), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
