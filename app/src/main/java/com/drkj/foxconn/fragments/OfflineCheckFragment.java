@@ -47,14 +47,18 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
     TextView tvRoom;
     @BindView(R.id.offline_check_tv_equipment)
     TextView tvEquipment;
+    @BindView(R.id.offline_check_tv_no_data)
+    TextView tvNoData;
 
-    List<EquipmentResultBean.DataBean> dataBeans;
+    List<EquipmentResultBean.DataBean> dataBeans = new ArrayList<>();
 
     public OfflineCheckAdapter offlineCheckAdapter;
 
     private NewMainKotlinActivity activity;
 
     private NfcCardUtil nfcCardUtil;
+
+    private String scanNfcCode;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,22 +86,24 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
     @Override
     public void onStart() {
         super.onStart();
-        dataBeans = DbController.getInstance().queryAllEquipment();
-        offlineCheckAdapter = new OfflineCheckAdapter(getContext(), dataBeans);
-        listView.setAdapter(offlineCheckAdapter);
+//        dataBeans = DbController.getInstance().queryAllEquipment();
+//        offlineCheckAdapter = new OfflineCheckAdapter(getContext(), dataBeans);
+//        listView.setAdapter(offlineCheckAdapter);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        String newCode = nfcCardUtil.readPointData(activity.getIntent(), 0, 1);
-
-        if (!TextUtils.isEmpty(newCode) && !newCode.contains(DbConstant.NFC_HEAD)) {
-            newCode = DbConstant.NFC_HEAD + newCode.trim().substring(0, 6);
+        if (TextUtils.isEmpty(scanNfcCode)) {
+            scanNfcCode = nfcCardUtil.readPointData(activity.getIntent(), 0, 1);
         }
-        Logger.d(newCode);
-        RegionResultBean.DataBean regionBean = DbController.getInstance().queryRegionByNfcCode(newCode);
+
+        if (!TextUtils.isEmpty(scanNfcCode) && !scanNfcCode.contains(DbConstant.NFC_HEAD)) {
+            scanNfcCode = DbConstant.NFC_HEAD + scanNfcCode.trim().substring(0, 6);
+        }
+//        Logger.d(newCode);
+        RegionResultBean.DataBean regionBean = DbController.getInstance().queryRegionByNfcCode(scanNfcCode);
         if (!TextUtils.isEmpty(regionBean.getType()) && !TextUtils.isEmpty(regionBean.getName())) {
             switch (regionBean.getType()) {
                 case DbConstant.TYPE_BUILDING:
@@ -115,9 +121,9 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
             }
         }
 
-        if (!TextUtils.isEmpty(newCode) && TextUtils.isEmpty(regionBean.getName())) {
+        if (!TextUtils.isEmpty(scanNfcCode) && TextUtils.isEmpty(regionBean.getName())) {
             List<EquipmentResultBean.DataBean> singleEquipmentList = new ArrayList<>();
-            EquipmentResultBean.DataBean bean = DbController.getInstance().queryEquipmentByNfcCode(newCode);
+            EquipmentResultBean.DataBean bean = DbController.getInstance().queryEquipmentByNfcCode(scanNfcCode);
             singleEquipmentList.add(bean);
             if (!TextUtils.isEmpty(bean.getName())) {
                 dataBeans = singleEquipmentList;
@@ -125,12 +131,16 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
                 setTab(tvEquipment);
             }
 
-        } else if (TextUtils.isEmpty(newCode)) {
+        } else if (TextUtils.isEmpty(scanNfcCode)) {
             dataBeans = DbController.getInstance().queryAllEquipment();
         }
 
-        offlineCheckAdapter = new OfflineCheckAdapter(getContext(), dataBeans);
-        listView.setAdapter(offlineCheckAdapter);
+//        offlineCheckAdapter = new OfflineCheckAdapter(getContext(), dataBeans);
+//        listView.setAdapter(offlineCheckAdapter);
+
+        if (!TextUtils.isEmpty(scanNfcCode)) {
+            setListBeans(dataBeans);
+        }
         Log.e("fragment", "onResumeNfc");
     }
 
@@ -175,7 +185,7 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
                     }
                 }
             } else {
-                Toast.makeText(activity, "读取失败，请重新刷卡", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, getResources().getString(R.string.scan_failed), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -183,5 +193,19 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
     private void setListBeans(List<EquipmentResultBean.DataBean> list) {
         offlineCheckAdapter = new OfflineCheckAdapter(activity, list);
         listView.setAdapter(offlineCheckAdapter);
+        if (list.size() <= 0) {
+            tvNoData.setVisibility(View.VISIBLE);
+        } else {
+            tvNoData.setVisibility(View.GONE);
+        }
+    }
+
+    public void resetFragment() {
+        scanNfcCode = null;
+    }
+
+    @Override
+    public void onFragmentResult(@NotNull String result) {
+        Logger.d(result);
     }
 }

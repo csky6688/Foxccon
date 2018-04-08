@@ -163,7 +163,7 @@ public class DataSynchronizationFragment extends Fragment {
                         dialog.findViewById(R.id.avi).setVisibility(View.GONE);
                         dialog.findViewById(R.id.dialog_btn_confirm).setVisibility(View.VISIBLE);
                         TextView message = dialog.findViewById(R.id.dialog_message);
-                        message.setText("数据同步完成!");
+                        message.setText(getResources().getString(R.string.data_download_success));
                         if (activity.getFragmentList().get(activity.getFRAGMENT_OFFLINE_CHECK()) != null) {
                             activity.getFragmentList().get(activity.getFRAGMENT_OFFLINE_CHECK()).onResume();
                         }
@@ -178,11 +178,12 @@ public class DataSynchronizationFragment extends Fragment {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         throwable.printStackTrace();
+                        DbController.getInstance().deleteAllData();
                         dialog.findViewById(R.id.avi).setVisibility(View.GONE);
                         dialog.findViewById(R.id.dialog_btn_confirm).setVisibility(View.VISIBLE);
                         TextView message = dialog.findViewById(R.id.dialog_message);
                         Log.e("sync", throwable.getMessage());
-                        message.setText("数据同步失败!");
+                        message.setText(getResources().getString(R.string.data_download_failed) + "\n" + throwable.toString());
                         dialog.findViewById(R.id.dialog_btn_confirm).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -242,6 +243,7 @@ public class DataSynchronizationFragment extends Fragment {
                                     activity.hideTab();
                                     activity.switchFragment(activity.getFragmentList().get(activity.getFRAGMENT_OFFLINE_CHECK()));
                                     activity.onClick(activity.findViewById(R.id.new_main_image_data_synchronization));
+                                    ((OfflineCheckFragment) activity.getFragmentList().get(activity.getFRAGMENT_OFFLINE_CHECK())).resetFragment();
                                 }
 
                                 dialog.findViewById(R.id.dialog_btn_confirm).setOnClickListener(new View.OnClickListener() {
@@ -261,7 +263,6 @@ public class DataSynchronizationFragment extends Fragment {
                                 } else {
                                     message.setText("上传失败！");
                                 }
-
                                 dialog.findViewById(R.id.dialog_btn_confirm).setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {

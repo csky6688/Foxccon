@@ -16,6 +16,7 @@ import com.drkj.foxconn.R
 import com.drkj.foxconn.bean.EquipmentResultBean
 import com.drkj.foxconn.util.DateUtil
 import com.orhanobut.logger.Logger
+import java.math.BigDecimal
 
 /**
  * 离线巡检列表适配器
@@ -117,7 +118,8 @@ class CheckAdapter(context: Context, bean: EquipmentResultBean.DataBean) : BaseA
         }
 
         if (!TextUtils.isEmpty(mBean.isCheck) && mBean.isCheck == "true") {
-            holder.attrValueText.text = mBean.equipmentAttributeList[position].value.toString()
+            val decimal = BigDecimal((mBean.equipmentAttributeList[position].value).toString())
+            holder.attrValueText.text = String.format(decimal.toString())
         } else {
             holder.attrValueText.text = (0.0).toString()
         }

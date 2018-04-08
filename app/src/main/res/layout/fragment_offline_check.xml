@@ -65,11 +65,25 @@
         android:layout_height="1dp"
         android:background="#dfdfdf" />
 
-    <ListView
-        android:id="@+id/list_equipment"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="#f1f1f1"
-        android:dividerHeight="5dp"
-        android:scrollbars="none" />
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/offline_check_tv_no_data"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/please_scan_tag"
+            android:textSize="24sp" />
+
+        <ListView
+            android:id="@+id/list_equipment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#f1f1f1"
+            android:dividerHeight="5dp"
+            android:scrollbars="none" />
+    </FrameLayout>
+
 </LinearLayout>

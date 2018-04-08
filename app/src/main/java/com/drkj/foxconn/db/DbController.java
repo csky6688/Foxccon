@@ -13,9 +13,11 @@ import com.drkj.foxconn.bean.EquipmentResultBean;
 import com.drkj.foxconn.bean.FeedbackBean;
 import com.drkj.foxconn.bean.RegionResultBean;
 import com.drkj.foxconn.util.DateUtil;
+import com.drkj.foxconn.util.SortEquipmentByCode;
 import com.drkj.foxconn.util.SpUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -267,7 +269,7 @@ public class DbController {
             dataBeans.add(bean);
         }
         cursor.close();
-        return dataBeans;
+        return sortCheckEquipmentList(dataBeans);
     }
 
     /**
@@ -317,7 +319,7 @@ public class DbController {
             dataBeans.add(bean);
         }
         cursor.close();
-        return dataBeans;
+        return sortCheckEquipmentList(dataBeans);
     }
 
     /**
@@ -367,11 +369,11 @@ public class DbController {
             dataBeans.add(bean);
         }
         cursor.close();
-        return dataBeans;
+        return sortCheckEquipmentList(dataBeans);
     }
 
     /**
-     * 查询所有数据
+     * 查询所有设备
      *
      * @return
      */
@@ -416,6 +418,31 @@ public class DbController {
             dataBeans.add(bean);
         }
         cursor.close();
+
+        return sortCheckEquipmentList(dataBeans);
+    }
+
+    private List<EquipmentResultBean.DataBean> sortCheckEquipmentList(List<EquipmentResultBean.DataBean> dataBeans) {
+        /*
+         * 对所有设备进行排序，排序规则：
+         * 未巡检在前，已巡检在后
+         * 然后再按照NfcCode排序
+         */
+        List<EquipmentResultBean.DataBean> unChecked = new ArrayList<>();
+        List<EquipmentResultBean.DataBean> checked = new ArrayList<>();
+
+        for (EquipmentResultBean.DataBean item : dataBeans) {
+            if (item.isCheck().equals("false")) {
+                unChecked.add(item);
+            } else {
+                checked.add(item);
+            }
+        }
+        Collections.sort(unChecked, new SortEquipmentByCode());
+        Collections.sort(checked, new SortEquipmentByCode());
+        dataBeans.clear();
+        dataBeans.addAll(unChecked);
+        dataBeans.addAll(checked);
         return dataBeans;
     }
 

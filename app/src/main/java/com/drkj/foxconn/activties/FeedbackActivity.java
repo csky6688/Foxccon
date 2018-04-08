@@ -154,7 +154,7 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
     @OnClick(R.id.image_save_feedback)
     void saveFeedback() {
         if (TextUtils.isEmpty(tvLocation.getText())) {
-            Toast.makeText(this, "请扫描位置信息", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.scan_region_info), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -279,7 +279,7 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(FeedbackActivity.this, "没有搜索到代码:" + nfcCode, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FeedbackActivity.this, String.format(getResources().getString(R.string.no_region_code), nfcCode), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -287,7 +287,7 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
 
     @Override
     public void onNfcReceiveFailed() {
-        Toast.makeText(this, "读取失败,请重新读取", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getResources().getString(R.string.scan_card_again), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -295,7 +295,7 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(FeedbackActivity.this, "没有搜索到代码:" + nfcCode, Toast.LENGTH_SHORT).show();
+                Toast.makeText(FeedbackActivity.this, String.format(getResources().getString(R.string.no_region_code), nfcCode), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -313,7 +313,7 @@ public class FeedbackActivity extends BaseActivity implements ImageCaptureAdapte
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(FeedbackActivity.this, "扫描失败，请重试", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FeedbackActivity.this, getResources().getString(R.string.scan_failed), Toast.LENGTH_SHORT).show();
                 }
             });
         }

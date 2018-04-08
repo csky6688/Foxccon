@@ -4,19 +4,16 @@ package com.drkj.foxconn.net;
  * Created by ganlong on 2018/1/24.
  */
 public class ConstantUrl {
+
     public static String BASE_URL = "http://120.92.79.219:28080/xunjian/rest/";//测试服务器
 
-//    public static final String BASE_URL = "http://120.92.79.219:28080/rest/";//测试服务器
+//    public static final String BASE_URL = "http://192.168.31.140/rest/";//富士康内网服务器
 
-//    public static final String BASE_URL = "http://192.168.0.125:8080/jeecg/";//富士康服务器
-
-//    public static final String BASE_URL = "http://192.168.31.250:80/rest/";
-
-//    public static final String BASE_URL = "http://192.168.31.140/rest/";
-
-//    public static final String BASE_URL = "http://192.168.31.85/rest/";
+//    public static final String BASE_URL = "http://192.168.31.116/rest/";
 
 //    public static final String BASE_URL = "http://192.168.31.116/rest/";//本地测试
+
+//    public static final String BASE_URL = "http://192.168.0.109/rest/";
 
     public static final String API_TOKEN = "tokens";
 

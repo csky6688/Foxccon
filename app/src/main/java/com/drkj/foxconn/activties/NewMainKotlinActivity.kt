@@ -3,6 +3,7 @@ package com.drkj.foxconn.activties
 import android.content.Intent
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
+import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
@@ -31,6 +32,8 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
 
     private val presenter = MainPresenter()
 
+    private val CHECK = 23333
+
     private var nfcCardUtil: NfcCardUtil? = null
 
     private val mConentView: FrameLayout by bindView(R.id.new_main_content)
@@ -57,6 +60,8 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
 
     interface OnNfcListener {
         fun onNfcReceived(nfcCode: String)
+
+        fun onFragmentResult(result: String)
     }
 
     private var onNfcListener: OnNfcListener? = null
@@ -113,7 +118,7 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
         switchFragment(fragmentList[FRAGMENT_FEEDBACK]).commit()
         switchFragment(fragmentList[FRAGMENT_FAULT]).commit()
         switchFragment(fragmentList[FRAGMENT_SYNC]).commit()//默认加载第一个界面
-        tvTitle.text = "数据同步"
+        tvTitle.text = resources.getString(R.string.data_synchronization)
 
         decoderManager = DecoderManager.getInstance()
 
@@ -126,24 +131,24 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
             R.id.new_main_image_data_synchronization -> {
                 imageSync.setImageResource(R.drawable.ic_data_synchronization_selected)
                 switchFragment(fragmentList[FRAGMENT_SYNC]).commit()
-                tvTitle.text = "数据同步"
+                tvTitle.text = resources.getString(R.string.data_synchronization)
             }
             R.id.new_main_image_offline_check -> {
                 imageOffline.setImageResource(R.drawable.ic_offline_check_selected)
                 switchFragment(fragmentList[FRAGMENT_OFFLINE_CHECK]).commit()
-                tvTitle.text = "巡检作业"
+                tvTitle.text = resources.getString(R.string.offline_check)
             }
             R.id.new_main_image_scene_feedback -> {
                 imageFeedback.setImageResource(R.drawable.ic_scene_feedback_selected)
                 switchFragment(fragmentList[FRAGMENT_FEEDBACK]).commit()
                 fragmentList[FRAGMENT_FEEDBACK].onResume()
-                tvTitle.text = "现场反馈"
+                tvTitle.text = resources.getString(R.string.scene_feedback)
             }
             R.id.new_main_image_equipment_fault -> {
                 imageFault.setImageResource(R.drawable.ic_equipment_fault_selected)
                 switchFragment(fragmentList[FRAGMENT_FAULT]).commit()
                 fragmentList[FRAGMENT_FAULT].onResume()
-                tvTitle.text = "设备故障"
+                tvTitle.text = resources.getString(R.string.equipment_fault)
             }
         }
     }
@@ -180,7 +185,7 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
         resetButtons()
         imageOffline.setImageResource(R.drawable.ic_offline_check_selected)
         switchFragment(fragmentList[FRAGMENT_OFFLINE_CHECK]).commit()
-        tvTitle.text = "巡检作业"
+        tvTitle.text = resources.getString(R.string.offline_check)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -190,6 +195,18 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
                     decoderManager!!.connectDecoderSRV()
                     decoderManager!!.dispatchScanKeyEvent(event)
                 }
+                true
+            }
+            KeyEvent.KEYCODE_BACK -> {
+                val dialog = AlertDialog.Builder(this)
+                        .setMessage(R.string.really_logout)
+                        .setPositiveButton(android.R.string.ok, { dialog, _ ->
+                            dialog.dismiss()
+                            finish()
+                        }).setNegativeButton(android.R.string.cancel, { dialog, _ ->
+                            dialog.dismiss()
+                        }).create()
+                dialog.show()
                 true
             }
             else -> super.onKeyDown(keyCode, event)
@@ -223,5 +240,14 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
         Log.e("scan", result)
     }
 
-//    fun getFragmentList(): List<Fragment> = fragmentList
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            CHECK -> {
+                onNfcListener?.onFragmentResult(data!!.getStringExtra("check"))
+            }
+        }
+    }
+
+    //    fun getFragmentList(): List<Fragment> = fragmentList
 }

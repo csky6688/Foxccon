@@ -2,7 +2,6 @@ package com.drkj.foxconn.activties
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.view.KeyEvent
 import android.widget.*
@@ -86,7 +85,7 @@ class NewLoginKotlinActivity : BaseKotlinActivity(), ILoginView {
         }
         SpUtil.putBoolean(this, SpUtil.REMEMBER, remember.isChecked)
         dialog?.dismiss()
-        Toast.makeText(this, "登录失败，请重试或检查网络连接\n${SpUtil.getString(this, SpUtil.TOKEN)}\n${throwable.message}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "登录失败，请重试或检查网络连接\n${throwable.message}", Toast.LENGTH_SHORT).show()
     }
 
     override fun onReceiveMsg(msg: String) {
@@ -116,10 +115,10 @@ class NewLoginKotlinActivity : BaseKotlinActivity(), ILoginView {
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> {
                 exitDialog = AlertDialog.Builder(this)
-                        .setTitle("退出")
-                        .setMessage("是否退出？")
-                        .setNegativeButton("取消") { dialog, msg -> dialog?.dismiss() }
-                        .setPositiveButton("确定") { dialog, msg ->
+                        .setTitle(resources.getString(R.string.exit))
+                        .setMessage(resources.getString(R.string.really_exit))
+                        .setNegativeButton(resources.getString(android.R.string.cancel)) { dialog, msg -> dialog?.dismiss() }
+                        .setPositiveButton(resources.getString(android.R.string.ok)) { dialog, msg ->
                             dialog.dismiss()
                             finish()
                         }
@@ -132,6 +131,6 @@ class NewLoginKotlinActivity : BaseKotlinActivity(), ILoginView {
 
     override fun onDestroy() {
         super.onDestroy()
-        presenter.destory()
+        presenter.destroy()
     }
 }

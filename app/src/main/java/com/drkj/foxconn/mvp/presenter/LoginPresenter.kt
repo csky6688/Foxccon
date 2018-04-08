@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.TextUtils
 import android.util.Log
 import android.widget.EditText
+import com.drkj.foxconn.R
 import com.drkj.foxconn.db.DbController
 import com.drkj.foxconn.mvp.BasePresenter
 import com.drkj.foxconn.mvp.view.ILoginView
@@ -24,7 +25,7 @@ class LoginPresenter : BasePresenter<ILoginView>() {
     fun login(userName: EditText, password: EditText) {
         rootView!!.onLoginStart()
         if (TextUtils.isEmpty(userName.text.toString()) || TextUtils.isEmpty(password.text.toString())) {
-            rootView!!.onReceiveMsg("帐号和密码不能为空")
+            rootView!!.onReceiveMsg(resources!!.getString(R.string.account_password_not_null))
         }
 
         NetClient.getInstance().api.getToken(userName.text.toString(), password.text.toString())

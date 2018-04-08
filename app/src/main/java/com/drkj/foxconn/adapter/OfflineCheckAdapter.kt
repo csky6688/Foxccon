@@ -12,6 +12,8 @@ import android.widget.TextView
 import com.drkj.foxconn.R
 import com.drkj.foxconn.bean.EquipmentResultBean
 import com.drkj.foxconn.db.DbController
+import com.drkj.foxconn.util.SortEquipmentByCode
+import java.util.Collections
 
 /**
  * 离线巡检list适配器
@@ -45,7 +47,7 @@ class OfflineCheckAdapter(context: Context, dataBeans: List<EquipmentResultBean.
         holder.equipmentDefaultCode.text = mDataBeans[position].code
         holder.equipmentNfcCode.text = mDataBeans[position].nfcCode
 
-        if (!TextUtils.isEmpty(mDataBeans[position].buildingId)){
+        if (!TextUtils.isEmpty(mDataBeans[position].buildingId)) {
 
         }
 

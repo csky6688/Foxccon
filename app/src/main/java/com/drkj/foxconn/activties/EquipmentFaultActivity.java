@@ -135,7 +135,7 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
     @OnClick(R.id.image_save_feedback)
     void saveFeedback() {
         if (TextUtils.isEmpty(tvLocation.getText())) {
-            Toast.makeText(this, "请扫描设备信息", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.scan_equipment_info), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -266,7 +266,7 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
 
     @Override
     public void onNfcReceiveFailed() {
-        Toast.makeText(this, "读取失败,请重新刷卡", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getResources().getString(R.string.scan_card_again), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -288,7 +288,7 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(EquipmentFaultActivity.this, "没有搜索到代码:" + nfcCode, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EquipmentFaultActivity.this, String.format(getResources().getString(R.string.no_equipment_code), nfcCode), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -307,7 +307,7 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(EquipmentFaultActivity.this, "扫描失败，请重试", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EquipmentFaultActivity.this, getResources().getString(R.string.scan_failed), Toast.LENGTH_SHORT).show();
                 }
             });
         }
