@@ -23,6 +23,7 @@ import io.reactivex.schedulers.Schedulers
 class LoginPresenter : BasePresenter<ILoginView>() {
 
     fun login(userName: EditText, password: EditText) {
+        DbController.getInstance().deleteAllData()//初始化，先清空数据
         rootView!!.onLoginStart()
         if (TextUtils.isEmpty(userName.text.toString()) || TextUtils.isEmpty(password.text.toString())) {
             rootView!!.onReceiveMsg(resources!!.getString(R.string.account_password_not_null))

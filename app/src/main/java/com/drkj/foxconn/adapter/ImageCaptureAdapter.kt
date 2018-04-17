@@ -67,7 +67,7 @@ class ImageCaptureAdapter(context: Context) : RecyclerView.Adapter<ImageCaptureA
             holder.itemDelete.visibility = View.GONE
         } else if (mImgList.isNotEmpty() && position == mImgList.size) {
             holder!!.itemPic.setOnClickListener {
-                if (mImgList.size >= 4) {
+                if (mImgList.size >= maxCount) {
                     onItemClickListener?.onReceive("最多只能储存${maxCount}张照片")
                 } else {
                     onItemClickListener?.onAddClick()

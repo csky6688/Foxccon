@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.drkj.foxconn.db.DbConstant;
+
 import java.io.IOException;
 
 /**
@@ -51,6 +53,13 @@ public class NfcCardUtil {
             data = readTag(tag);
         }
         return data;
+    }
+
+    public String formatNfcCode(String nfcData) {
+        if (!TextUtils.isEmpty(nfcData) && !nfcData.contains(DbConstant.NFC_HEAD)) {
+            nfcData = DbConstant.NFC_HEAD + nfcData.trim().substring(0, 6);
+        }
+        return nfcData;
     }
 
     private String readTag(Tag tag) {
@@ -201,7 +210,7 @@ public class NfcCardUtil {
         }
 
         if (!TextUtils.isEmpty(data)) {
-            return "XJ" + data.trim().substring(0, 6);
+            return DbConstant.NFC_HEAD + data.trim().substring(0, 6);
         } else {
             return null;
         }

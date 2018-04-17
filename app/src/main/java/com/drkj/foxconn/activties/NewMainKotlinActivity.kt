@@ -10,10 +10,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.*
 import com.drkj.foxconn.R
-import com.drkj.foxconn.fragments.DataSynchronizationFragment
-import com.drkj.foxconn.fragments.EquipmentFaultFragment
-import com.drkj.foxconn.fragments.FeedbackFragment
-import com.drkj.foxconn.fragments.OfflineCheckFragment
+import com.drkj.foxconn.fragments.*
 import com.drkj.foxconn.mvp.presenter.MainPresenter
 import com.drkj.foxconn.mvp.view.IMainView
 import com.drkj.foxconn.util.NfcCardUtil
@@ -91,8 +88,6 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setIntent(intent)
-//        onNfcListener?.onNfcReceived(nfcCardUtil!!.readPointData(intent, 0, 1))
-//        nfcCardUtil!!.readPointData(intent, 0, 1)
     }
 
     override fun initView() {
@@ -162,7 +157,6 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
 
     fun switchFragment(targetFragment: Fragment): FragmentTransaction {
         val transaction = supportFragmentManager.beginTransaction()
-//        targetFragment.onResume()
         if (!targetFragment.isAdded) {
             if (currentFragment != null) {
                 transaction.hide(currentFragment)
@@ -235,7 +229,6 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
             if (!TextUtils.isEmpty(result)) {
                 onNfcListener?.onNfcReceived(result!!)
             }
-//            Toast.makeText(this, "扫描结果:\n$result", Toast.LENGTH_SHORT).show()
         }
         Log.e("scan", result)
     }
@@ -248,6 +241,4 @@ class NewMainKotlinActivity : BaseKotlinActivity(), IMainView, View.OnClickListe
             }
         }
     }
-
-    //    fun getFragmentList(): List<Fragment> = fragmentList
 }

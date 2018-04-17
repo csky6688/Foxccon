@@ -159,7 +159,8 @@ public class DataSynchronizationFragment extends Fragment {
                 .subscribe(new Consumer<EquipmentResultBean>() {
                     @Override
                     public void accept(EquipmentResultBean bean) throws Exception {
-                        DbController.getInstance().saveEquipment(bean, SpUtil.getString(activity, SpUtil.TASK_TYPE));//
+                        Logger.i(new Gson().toJson(bean));
+                        DbController.getInstance().saveEquipment(bean, SpUtil.getString(activity, SpUtil.TASK_TYPE));
                         dialog.findViewById(R.id.avi).setVisibility(View.GONE);
                         dialog.findViewById(R.id.dialog_btn_confirm).setVisibility(View.VISIBLE);
                         TextView message = dialog.findViewById(R.id.dialog_message);
@@ -182,7 +183,7 @@ public class DataSynchronizationFragment extends Fragment {
                         dialog.findViewById(R.id.avi).setVisibility(View.GONE);
                         dialog.findViewById(R.id.dialog_btn_confirm).setVisibility(View.VISIBLE);
                         TextView message = dialog.findViewById(R.id.dialog_message);
-                        Log.e("sync", throwable.getMessage());
+//                        Log.e("sync", throwable.getMessage());
                         message.setText(getResources().getString(R.string.data_download_failed) + "\n" + throwable.toString());
                         dialog.findViewById(R.id.dialog_btn_confirm).setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -279,7 +280,7 @@ public class DataSynchronizationFragment extends Fragment {
                             dialog.findViewById(R.id.avi).setVisibility(View.GONE);
                             dialog.findViewById(R.id.dialog_btn_confirm).setVisibility(View.VISIBLE);
                             TextView message = dialog.findViewById(R.id.dialog_message);
-                            Log.e("sync", throwable.getMessage());
+//                            Log.e("sync", throwable.getMessage());
                             message.setText("数据同步失败!");
                             dialog.findViewById(R.id.dialog_btn_confirm).setOnClickListener(new View.OnClickListener() {
                                 @Override

@@ -86,62 +86,25 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
     @Override
     public void onStart() {
         super.onStart();
-//        dataBeans = DbController.getInstance().queryAllEquipment();
-//        offlineCheckAdapter = new OfflineCheckAdapter(getContext(), dataBeans);
-//        listView.setAdapter(offlineCheckAdapter);
+        Log.d("fragment", "onStart");
+        if (!TextUtils.isEmpty(scanNfcCode)) {
+            displayBeansByNfcCode(scanNfcCode, false);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("fragment", "onResume");
 
-        if (TextUtils.isEmpty(scanNfcCode)) {
-            scanNfcCode = nfcCardUtil.readPointData(activity.getIntent(), 0, 1);
+        String tempNfcCode = nfcCardUtil.formatNfcCode(nfcCardUtil.readPointData(activity.getIntent(), 0, 1));
+
+        if (!TextUtils.isEmpty(tempNfcCode)) {
+            scanNfcCode = tempNfcCode;
+        } else {
+            dataBeans.clear();
         }
-
-        if (!TextUtils.isEmpty(scanNfcCode) && !scanNfcCode.contains(DbConstant.NFC_HEAD)) {
-            scanNfcCode = DbConstant.NFC_HEAD + scanNfcCode.trim().substring(0, 6);
-        }
-//        Logger.d(newCode);
-        RegionResultBean.DataBean regionBean = DbController.getInstance().queryRegionByNfcCode(scanNfcCode);
-        if (!TextUtils.isEmpty(regionBean.getType()) && !TextUtils.isEmpty(regionBean.getName())) {
-            switch (regionBean.getType()) {
-                case DbConstant.TYPE_BUILDING:
-                    setTab(tvBuilding);
-                    dataBeans = DbController.getInstance().queryAllEquipmentByBuilding(regionBean.getId());
-                    break;
-                case DbConstant.TYPE_STOREY:
-                    setTab(tvStorey);
-                    dataBeans = DbController.getInstance().queryAllEquipmentByStorey(regionBean.getId());
-                    break;
-                case DbConstant.TYPE_ROOM:
-                    setTab(tvRoom);
-                    dataBeans = DbController.getInstance().queryAllEquipmentByRoom(regionBean.getId());
-                    break;
-            }
-        }
-
-        if (!TextUtils.isEmpty(scanNfcCode) && TextUtils.isEmpty(regionBean.getName())) {
-            List<EquipmentResultBean.DataBean> singleEquipmentList = new ArrayList<>();
-            EquipmentResultBean.DataBean bean = DbController.getInstance().queryEquipmentByNfcCode(scanNfcCode);
-            singleEquipmentList.add(bean);
-            if (!TextUtils.isEmpty(bean.getName())) {
-                dataBeans = singleEquipmentList;
-                setListBeans(singleEquipmentList);
-                setTab(tvEquipment);
-            }
-
-        } else if (TextUtils.isEmpty(scanNfcCode)) {
-            dataBeans = DbController.getInstance().queryAllEquipment();
-        }
-
-//        offlineCheckAdapter = new OfflineCheckAdapter(getContext(), dataBeans);
-//        listView.setAdapter(offlineCheckAdapter);
-
-        if (!TextUtils.isEmpty(scanNfcCode)) {
-            setListBeans(dataBeans);
-        }
-        Log.e("fragment", "onResumeNfc");
+        displayBeansByNfcCode(scanNfcCode, false);
     }
 
     private void setTab(TextView target) {
@@ -154,39 +117,49 @@ public class OfflineCheckFragment extends Fragment implements NewMainKotlinActiv
 
     @Override
     public void onNfcReceived(@NotNull String nfcCode) {
-        if (!isHidden()) {
-            if (!TextUtils.isEmpty(nfcCode)) {
-                RegionResultBean.DataBean regionBean = DbController.getInstance().queryRegionByNfcCode(nfcCode);
-                if (!TextUtils.isEmpty(regionBean.getType()) && !TextUtils.isEmpty(regionBean.getName())) {
-                    switch (regionBean.getType()) {
-                        case DbConstant.TYPE_BUILDING:
-                            setTab(tvBuilding);
-                            setListBeans(DbController.getInstance().queryAllEquipmentByBuilding(regionBean.getId()));
-                            break;
-                        case DbConstant.TYPE_STOREY:
-                            setTab(tvStorey);
-                            setListBeans(DbController.getInstance().queryAllEquipmentByStorey(regionBean.getId()));
-                            break;
-                        case DbConstant.TYPE_ROOM:
-                            setTab(tvRoom);
-                            setListBeans(DbController.getInstance().queryAllEquipmentByRoom(regionBean.getId()));
-                            break;
-                    }
-                }
+        scanNfcCode = nfcCode;
+        displayBeansByNfcCode(nfcCode, true);
+    }
 
-                if (!TextUtils.isEmpty(nfcCode) && TextUtils.isEmpty(regionBean.getName())) {
-                    setTab(tvEquipment);
-                    List<EquipmentResultBean.DataBean> singleEquipmentList = new ArrayList<>();
-                    EquipmentResultBean.DataBean bean = DbController.getInstance().queryEquipmentByNfcCode(nfcCode);
-                    if (!TextUtils.isEmpty(bean.getName())) {
-                        singleEquipmentList.add(bean);
-                        dataBeans = singleEquipmentList;
-                        setListBeans(singleEquipmentList);
-                    }
+    private void displayBeansByNfcCode(String nfcCode, boolean isQrCode) {
+        if (!TextUtils.isEmpty(nfcCode)) {
+            RegionResultBean.DataBean regionBean = DbController.getInstance().queryRegionByNfcCode(nfcCode);
+            if (!TextUtils.isEmpty(regionBean.getType()) && !TextUtils.isEmpty(regionBean.getName())) {
+                switch (regionBean.getType()) {
+                    case DbConstant.TYPE_BUILDING:
+                        setTab(tvBuilding);
+                        dataBeans = DbController.getInstance().queryAllEquipmentByBuilding(regionBean.getId());
+                        break;
+                    case DbConstant.TYPE_STOREY:
+                        setTab(tvStorey);
+                        dataBeans = DbController.getInstance().queryAllEquipmentByStorey(regionBean.getId());
+                        break;
+                    case DbConstant.TYPE_ROOM:
+                        setTab(tvRoom);
+                        dataBeans = DbController.getInstance().queryAllEquipmentByRoom(regionBean.getId());
+                        break;
                 }
-            } else {
-                Toast.makeText(activity, getResources().getString(R.string.scan_failed), Toast.LENGTH_SHORT).show();
+                setListBeans(dataBeans);
             }
+
+            if (!TextUtils.isEmpty(nfcCode) && TextUtils.isEmpty(regionBean.getName())) {
+                setTab(tvEquipment);
+                List<EquipmentResultBean.DataBean> singleEquipmentList = new ArrayList<>();
+                EquipmentResultBean.DataBean bean = DbController.getInstance().queryEquipmentByNfcCode(nfcCode);
+                if (!TextUtils.isEmpty(bean.getName())) {
+                    singleEquipmentList.add(bean);
+                    dataBeans = singleEquipmentList;
+                    setListBeans(singleEquipmentList);
+                } else {
+                    dataBeans.clear();
+                    setListBeans(dataBeans);
+                }
+            }
+        } else if (isQrCode) {
+            Toast.makeText(activity, getResources().getString(R.string.scan_failed), Toast.LENGTH_SHORT).show();
+        } else {
+            dataBeans.clear();
+            setListBeans(dataBeans);
         }
     }
 

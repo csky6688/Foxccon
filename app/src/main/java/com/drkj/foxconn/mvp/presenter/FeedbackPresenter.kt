@@ -1,6 +1,7 @@
 package com.drkj.foxconn.mvp.presenter
 
 import android.text.TextUtils
+import com.drkj.foxconn.db.DbConstant
 import com.drkj.foxconn.db.DbController
 import com.drkj.foxconn.mvp.BasePresenter
 import com.drkj.foxconn.mvp.view.IFeedbackView
@@ -19,19 +20,11 @@ class FeedbackPresenter : BasePresenter<IFeedbackView>() {
         rootView!!.onDeployFeedback(feedbackBean)
     }
 
-    fun syncDecode(nfcCode: String) {
-
-    }
-
-    fun syncNfc(nfcCode: String) {
-
-    }
-
     fun queryFeedback(nfcCode: String) {
         val location = StringBuilder()
 
         if (!TextUtils.isEmpty(nfcCode)) {
-            if (nfcCode.contains("XJ")) {
+            if (nfcCode.contains(DbConstant.NFC_HEAD)) {
                 val bean = DbController.getInstance().queryRegionByNfcCode(nfcCode)
 
                 if (!TextUtils.isEmpty(bean.parentId)) {
@@ -51,7 +44,7 @@ class FeedbackPresenter : BasePresenter<IFeedbackView>() {
                     rootView!!.onNoNfcCode(nfcCode)
                 }
             } else {
-                val newCode = "XJ${nfcCode.trim().substring(0, 6)}"
+                val newCode = "${DbConstant.NFC_HEAD}${nfcCode.trim().substring(0, 6)}"
                 val bean = DbController.getInstance().queryRegionByNfcCode(newCode)
 
                 if (!TextUtils.isEmpty(bean.parentId)) {

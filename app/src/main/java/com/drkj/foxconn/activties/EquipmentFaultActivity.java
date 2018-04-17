@@ -92,6 +92,7 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
         isResume = true;
 //        decoderManager.connectDecoderSRV();
         decoderManager.addDecoderStatusListener(this);
+
     }
 
     @Override
@@ -106,7 +107,7 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        presenter.queryEquipmentFault(nfcCardUtil.readPointData(intent, 0, 1));
+        presenter.queryEquipmentFault(nfcCardUtil.readPointData(getIntent(), 0, 1));
     }
 
     private void initView() {
@@ -168,7 +169,7 @@ public class EquipmentFaultActivity extends BaseActivity implements ImageCapture
             equipmentFaultBean.setContent(content.getText().toString());
             equipmentFaultBean.setType(type);
             equipmentFaultBean.setId(tempId);
-            equipmentFaultBean.setEquipmentCode(mNfcCode);
+            equipmentFaultBean.setEquipmentCode(tvCode.getText().toString());
             equipmentFaultBean.setLocation(tvLocation.getText().toString());
             equipmentFaultBean.setEquipmentName(tvName.getText().toString());
             List<EquipmentFaultBean.EquipmentFeedbackPictureListBean> pictureBeanList = new ArrayList<>();

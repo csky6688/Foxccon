@@ -6,6 +6,7 @@ import android.content.Intent
 import android.view.KeyEvent
 import android.widget.*
 import com.drkj.foxconn.R
+import com.drkj.foxconn.db.DbController
 import com.drkj.foxconn.mvp.presenter.LoginPresenter
 import com.drkj.foxconn.mvp.view.ILoginView
 import com.drkj.foxconn.util.SpUtil
